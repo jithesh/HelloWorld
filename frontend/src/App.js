@@ -681,7 +681,7 @@ const Dashboard = () => {
               lastSyncTime={lastSyncTime}
             />
 
-            <div className="grid gap-6 lg:grid-cols-3">
+            <div className="grid gap-6 lg:grid-cols-4">
               <StockList 
                 title="🕐 Latest Activity (Last Hour)" 
                 stocks={dashboardData?.latest_hour_stocks} 
