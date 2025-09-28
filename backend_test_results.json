@@ -1,0 +1,117 @@
+{
+  "timestamp": "2025-09-28T04:49:17.698379",
+  "total_tests": 18,
+  "passed_tests": 15,
+  "failed_tests": 3,
+  "success_rate": 83.33333333333334,
+  "test_details": [
+    {
+      "test_name": "Root API Endpoint",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.027257"
+    },
+    {
+      "test_name": "CORS Configuration",
+      "success": false,
+      "details": "Missing CORS headers",
+      "timestamp": "2025-09-28T04:49:17.066342"
+    },
+    {
+      "test_name": "Get User Info (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.105706"
+    },
+    {
+      "test_name": "Dashboard (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.144134"
+    },
+    {
+      "test_name": "Stock Sync (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.182401"
+    },
+    {
+      "test_name": "Stock Filters (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.220969"
+    },
+    {
+      "test_name": "Stock Analysis (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.259317"
+    },
+    {
+      "test_name": "Google Sheets Auth (Unauthenticated)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.297132"
+    },
+    {
+      "test_name": "Logout (Unauthenticated)",
+      "success": false,
+      "details": "Expected 401, got 200 - {'message': 'Logged out successfully'}",
+      "timestamp": "2025-09-28T04:49:17.335484"
+    },
+    {
+      "test_name": "Auth Session (No Token)",
+      "success": false,
+      "details": "Expected 400, got 500 - {'detail': '400: Missing session ID'}",
+      "timestamp": "2025-09-28T04:49:17.370614"
+    },
+    {
+      "test_name": "Dashboard (Mock Auth)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.410876"
+    },
+    {
+      "test_name": "Stock Sync (Mock Auth)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.446194"
+    },
+    {
+      "test_name": "Stock Filters (Mock Auth)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.481750"
+    },
+    {
+      "test_name": "Stock Analysis (Mock Auth)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.557108"
+    },
+    {
+      "test_name": "Google Sheets Auth (Mock Auth)",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.592200"
+    },
+    {
+      "test_name": "Invalid Endpoint /nonexistent",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.625607"
+    },
+    {
+      "test_name": "Invalid Endpoint /auth/invalid",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.662898"
+    },
+    {
+      "test_name": "Invalid Endpoint /stocks/invalid",
+      "success": true,
+      "details": "",
+      "timestamp": "2025-09-28T04:49:17.697691"
+    }
+  ]
+}
