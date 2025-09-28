@@ -623,9 +623,11 @@ async def demo_get_dashboard_summary():
             "recent_activity_count": len(latest_hour_stocks),
             "max_appearances_count": len(max_appearances_stocks),
             "recent_positive_count": len(recent_positive_stocks),
+            "recent_positive_5min_count": len(recent_positive_5min_stocks),
             "latest_hour_stocks": latest_hour_stocks,
             "max_appearances_stocks": max_appearances_stocks,
             "recent_positive_stocks": recent_positive_stocks,
+            "recent_positive_5min_stocks": recent_positive_5min_stocks,
             "ai_market_insights": ai_insights,
             "last_updated": datetime.now(timezone.utc)
         }
