@@ -405,16 +405,12 @@ const Dashboard = () => {
   const syncStockData = async () => {
     setLoading(true);
     try {
-      // Try authenticated sync first, fall back to demo sync
-      try {
+      if (isDemoMode) {
+        // Use demo sync in demo mode
+        await axios.post(`${API}/demo/sync`);
+      } else {
+        // Use authenticated sync
         await axios.post(`${API}/stocks/sync`);
-      } catch (authError) {
-        if (authError.response?.status === 401) {
-          // Use demo sync if not authenticated
-          await axios.post(`${API}/demo/sync`);
-        } else {
-          throw authError;
-        }
       }
       // Refresh dashboard after sync
       await fetchDashboard();
