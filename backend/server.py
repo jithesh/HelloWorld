@@ -349,6 +349,7 @@ async def fetch_live_boom_sheet_data():
         # Common GID patterns: 0, 1, 2, ... or random numbers
         potential_gids = ["118779867", "0", "1", "2", "3", "4", "5", "6"]  # Using the GID from your original URL
         
+        # First try with sheet name
         response = requests.get(boom_sheet_url, timeout=10)
         
         if response.status_code == 200:
@@ -360,11 +361,37 @@ async def fetch_live_boom_sheet_data():
             reader = csv.reader(io.StringIO(csv_data))
             rows = list(reader)
             
-            return rows
-        else:
-            # Fallback to sample data if live fetch fails
-            logging.warning(f"Could not fetch live data, status: {response.status_code}")
-            return None
+            # Check if we got meaningful data (should have stock names)
+            if len(rows) > 1 and any(stock in str(rows).upper() for stock in ["SONACOMS", "HDFCAMC", "DMART", "VEDL"]):
+                logging.info(f"Successfully fetched live data from Boom sheet: {len(rows)} rows")
+                return rows
+        
+        # If sheet name didn't work, try with GID from your original URL
+        for gid in potential_gids:
+            try:
+                gid_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
+                response = requests.get(gid_url, timeout=5)
+                
+                if response.status_code == 200:
+                    import csv
+                    import io
+                    
+                    csv_data = response.text
+                    reader = csv.reader(io.StringIO(csv_data))
+                    rows = list(reader)
+                    
+                    # Check if this looks like the Boom sheet (has stock data)
+                    if len(rows) > 1 and any(stock in str(rows).upper() for stock in ["SONACOMS", "HDFCAMC", "DMART", "VEDL"]):
+                        logging.info(f"Successfully fetched live data from GID {gid}: {len(rows)} rows")
+                        return rows
+                        
+            except Exception as e:
+                logging.debug(f"Failed to fetch with GID {gid}: {str(e)}")
+                continue
+        
+        # Fallback to sample data if live fetch fails
+        logging.warning(f"Could not fetch live data from any method")
+        return None
             
     except Exception as e:
         logging.error(f"Live data fetch error: {str(e)}")
