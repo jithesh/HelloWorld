@@ -538,30 +538,84 @@ async def demo_get_dashboard_summary():
 • Time Strategy: Focus on stocks with consistent 15-minute growth patterns
 • Risk Level: Current market shows {'moderate' if positive_stocks > len(stock_metrics)/2 else 'high'} volatility"""
         
-        # Calculate trading-specific metrics
-        positive_growth_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
+        # Calculate the three requested metrics
+        current_time = datetime.now(timezone.utc)
+        one_hour_ago = current_time - timedelta(hours=1)
+        fifteen_min_ago = current_time - timedelta(minutes=15)
         
-        # Most active stock (by frequency)
-        stock_frequency = {}
-        for stock in all_stocks:
+        # 1. Five stocks with latest data occurrences in the last hour
+        latest_hour_stocks = []
+        for stock in stock_metrics:
             symbol = stock['symbol']
+            symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
+            
+            # Get latest timestamp for this stock
+            if len(symbol_data) > 0:
+                latest_timestamp = symbol_data.iloc[-1]['timestamp']
+                # Convert to datetime if it's a string
+                if isinstance(latest_timestamp, str):
+                    try:
+                        latest_timestamp = datetime.fromisoformat(latest_timestamp.replace('Z', '+00:00'))
+                    except:
+                        latest_timestamp = current_time  # Fallback
+                
+                # Check if it's within the last hour
+                if latest_timestamp >= one_hour_ago:
+                    stock['latest_timestamp'] = latest_timestamp
+                    latest_hour_stocks.append(stock)
+        
+        # Sort by latest timestamp and take top 5
+        latest_hour_stocks.sort(key=lambda x: x.get('latest_timestamp', current_time), reverse=True)
+        latest_hour_stocks = latest_hour_stocks[:5]
+        
+        # 2. First five stocks with maximum number of appearances
+        stock_frequency = {}
+        for stock_entry in all_stocks:
+            symbol = stock_entry['symbol']
             stock_frequency[symbol] = stock_frequency.get(symbol, 0) + 1
         
-        most_active = max(stock_frequency.items(), key=lambda x: x[1]) if stock_frequency else ('N/A', 0)
-        most_active_stock = next((s for s in stock_metrics if s['symbol'] == most_active[0]), None)
+        # Sort by frequency and take top 5
+        max_appearances_stocks = []
+        sorted_frequency = sorted(stock_frequency.items(), key=lambda x: x[1], reverse=True)[:5]
+        for symbol, frequency in sorted_frequency:
+            stock_info = next((s for s in stock_metrics if s['symbol'] == symbol), None)
+            if stock_info:
+                stock_info['appearances'] = frequency
+                max_appearances_stocks.append(stock_info)
+        
+        # 3. Five stocks with positive price change and data occurrence in the last 15 minutes
+        recent_positive_stocks = []
+        for stock in stock_metrics:
+            symbol = stock['symbol']
+            symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
+            
+            # Check if stock has positive price change and recent data
+            if stock['percentage_change'] > 0 and len(symbol_data) > 0:
+                latest_timestamp = symbol_data.iloc[-1]['timestamp']
+                # Convert to datetime if it's a string
+                if isinstance(latest_timestamp, str):
+                    try:
+                        latest_timestamp = datetime.fromisoformat(latest_timestamp.replace('Z', '+00:00'))
+                    except:
+                        latest_timestamp = current_time  # Fallback
+                
+                # Check if it's within the last 15 minutes
+                if latest_timestamp >= fifteen_min_ago:
+                    stock['latest_timestamp'] = latest_timestamp
+                    recent_positive_stocks.append(stock)
+        
+        # Sort by percentage change and take top 5
+        recent_positive_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
+        recent_positive_stocks = recent_positive_stocks[:5]
         
         dashboard_data = {
             "total_stocks": len(stock_metrics),
-            "trading_opportunities": len(positive_growth_stocks),
-            "hot_stock": top_gainers[0] if top_gainers else None,
-            "most_active": {
-                "symbol": most_active[0],
-                "frequency": most_active[1],
-                **most_active_stock} if most_active_stock else {"symbol": "N/A", "frequency": 0},
-            "hot_movers": top_gainers,
-            "option_opportunities": positive_growth_stocks[:5],
-            "most_active_stocks": sorted([s for s in stock_metrics if s['symbol'] in [freq[0] for freq in sorted(stock_frequency.items(), key=lambda x: x[1], reverse=True)[:5]]], 
-                                       key=lambda x: x['percentage_change'], reverse=True),
+            "recent_activity_count": len(latest_hour_stocks),
+            "max_appearances_count": len(max_appearances_stocks),
+            "recent_positive_count": len(recent_positive_stocks),
+            "latest_hour_stocks": latest_hour_stocks,
+            "max_appearances_stocks": max_appearances_stocks,
+            "recent_positive_stocks": recent_positive_stocks,
             "ai_market_insights": ai_insights,
             "last_updated": datetime.now(timezone.utc)
         }
