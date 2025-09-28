@@ -511,11 +511,11 @@ const Dashboard = () => {
     }
   };
 
-  const syncStockData = async () => {
-    setLoading(true);
+  const syncStockData = async (isAutoSync = false) => {
+    if (!isAutoSync) setLoading(true); // Don't show loading for auto-sync
     setError(null);
     try {
-      console.log('Syncing stock data, isDemoMode:', isDemoMode);
+      console.log(`${isAutoSync ? 'Auto-syncing' : 'Manual syncing'} stock data, isDemoMode:`, isDemoMode);
       let syncResponse;
       if (isDemoMode) {
         // Use demo sync in demo mode
@@ -530,15 +530,48 @@ const Dashboard = () => {
       // Refresh dashboard after sync
       await fetchDashboard();
       
-      // Show success message briefly
-      setError(`✅ Sync completed! Loaded ${syncResponse.data.count} stock entries`);
-      setTimeout(() => setError(null), 3000);
+      if (!isAutoSync) {
+        // Show success message only for manual sync
+        setError(`✅ Sync completed! Loaded ${syncResponse.data.count} stock entries`);
+        setTimeout(() => setError(null), 3000);
+      }
       
     } catch (error) {
       console.error('Sync error:', error);
-      setError('Failed to sync stock data: ' + (error.message || 'Unknown error'));
+      if (!isAutoSync) {
+        setError('Failed to sync stock data: ' + (error.message || 'Unknown error'));
+      }
     } finally {
-      setLoading(false);
+      if (!isAutoSync) setLoading(false);
+    }
+  };
+
+  // Auto-sync functionality
+  const startAutoSync = () => {
+    if (autoSyncInterval.current) return; // Already running
+    
+    console.log('Starting auto-sync every 30 seconds');
+    autoSyncInterval.current = setInterval(() => {
+      console.log('Auto-sync triggered');
+      syncStockData(true); // Pass true to indicate auto-sync
+    }, 30000); // 30 seconds
+  };
+
+  const stopAutoSync = () => {
+    if (autoSyncInterval.current) {
+      console.log('Stopping auto-sync');
+      clearInterval(autoSyncInterval.current);
+      autoSyncInterval.current = null;
+    }
+  };
+
+  const toggleAutoSync = () => {
+    if (autoSyncEnabled) {
+      stopAutoSync();
+      setAutoSyncEnabled(false);
+    } else {
+      startAutoSync();
+      setAutoSyncEnabled(true);
     }
   };
 
