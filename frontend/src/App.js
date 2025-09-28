@@ -496,12 +496,8 @@ const Dashboard = () => {
       if (response.data) {
         console.log('About to set dashboard data:', response.data);
         setDashboardData(response.data);
+        setLastSyncTime(new Date());
         console.log('Dashboard data set, current state should update');
-        
-        // Force re-render by also setting a timestamp
-        setTimeout(() => {
-          console.log('Checking if dashboard data was set...');
-        }, 100);
       } else {
         console.error('No data in response');
         setError('No data received from server');
