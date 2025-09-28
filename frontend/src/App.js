@@ -68,7 +68,8 @@ const AuthProvider = ({ children }) => {
 
   const login = () => {
     const redirectUrl = encodeURIComponent(window.location.origin + '/dashboard');
-    window.location.href = `https://auth.emergentagent.com/?redirect=${redirectUrl}`;
+    // Add Google Sheets scope for accessing the Boom sheet
+    window.location.href = `https://auth.emergentagent.com/?redirect=${redirectUrl}&scopes=https://www.googleapis.com/auth/spreadsheets.readonly`;
   };
 
   const logout = async () => {
