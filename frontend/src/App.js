@@ -299,9 +299,14 @@ const FilteredStocks = () => {
               <SelectValue placeholder="Select filter" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="percentage_gains">Percentage Gains</SelectItem>
-              <SelectItem value="absolute_gains">Absolute Gains</SelectItem>
-              <SelectItem value="consistent_growth">Consistent Growth</SelectItem>
+              <SelectItem value="consistent_growth">Most Consistent Growth</SelectItem>
+              <SelectItem value="most_frequent">Most Frequently Tracked</SelectItem>
+              <SelectItem value="positive_growth">Positive Day Growth</SelectItem>
+              <SelectItem value="last_5min">Last 5 Minutes Growth</SelectItem>
+              <SelectItem value="last_15min">Last 15 Minutes Growth</SelectItem>
+              <SelectItem value="last_1hour">Last 1 Hour Growth</SelectItem>
+              <SelectItem value="most_attractive">Most Attractive to Buy</SelectItem>
+              <SelectItem value="active_positive">Most Active & Positive</SelectItem>
             </SelectContent>
           </Select>
         </div>
