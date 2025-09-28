@@ -579,14 +579,15 @@ const Dashboard = () => {
         )}
         
         {/* Debug info */}
-        {process.env.NODE_ENV === 'development' && (
-          <div className="mb-4 p-2 bg-gray-100 text-xs">
-            <p>Loading: {loading.toString()}</p>
-            <p>Dashboard Data: {dashboardData ? 'Present' : 'Null'}</p>
-            <p>Error: {error || 'None'}</p>
-            <p>Total Stocks: {dashboardData?.total_stocks || 'N/A'}</p>
-          </div>
-        )}
+        <div className="mb-4 p-2 bg-gray-100 text-xs">
+          <p>Loading: {loading.toString()}</p>
+          <p>Dashboard Data: {dashboardData ? 'Present' : 'Null'}</p>
+          <p>Error: {error || 'None'}</p>
+          <p>Total Stocks: {dashboardData?.total_stocks || 'N/A'}</p>
+          <p>Recent Activity: {dashboardData?.latest_hour_stocks?.length || 'N/A'}</p>
+          <p>Max Appearances: {dashboardData?.max_appearances_stocks?.length || 'N/A'}</p>
+          <p>Recent Positive: {dashboardData?.recent_positive_stocks?.length || 'N/A'}</p>
+        </div>
         
         {error && (
           <Alert className={`mb-6 ${error.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
