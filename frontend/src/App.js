@@ -259,6 +259,9 @@ const FilteredStocks = () => {
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [filterType, setFilterType] = useState('percentage_gains');
   const [loading, setLoading] = useState(false);
+  
+  const urlParams = new URLSearchParams(window.location.search);
+  const isDemoMode = urlParams.get('demo') === 'true';
 
   const fetchFilteredStocks = async (type) => {
     setLoading(true);
