@@ -402,9 +402,9 @@ async def sync_stock_data(demo: bool = False, current_user: User = Depends(get_c
         raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")
 
 @api_router.get("/stocks/dashboard")
-async def get_dashboard_summary(current_user: User = Depends(get_current_user)):
+async def get_dashboard_summary(demo: bool = False, current_user: User = Depends(get_current_user)):
     """Get dashboard summary with key metrics"""
-    if not current_user:
+    if not demo and not current_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
