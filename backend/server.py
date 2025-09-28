@@ -531,9 +531,9 @@ async def demo_get_dashboard_summary():
             symbol = stock_entry['symbol']
             stock_frequency[symbol] = stock_frequency.get(symbol, 0) + 1
         
-        # Sort by frequency and take top 5
+        # Sort by frequency and take top 10
         max_appearances_stocks = []
-        sorted_frequency = sorted(stock_frequency.items(), key=lambda x: x[1], reverse=True)[:5]
+        sorted_frequency = sorted(stock_frequency.items(), key=lambda x: x[1], reverse=True)[:10]  # Increased from 5 to 10
         for symbol, frequency in sorted_frequency:
             stock_info = next((s for s in stock_metrics if s['symbol'] == symbol), None)
             if stock_info:
