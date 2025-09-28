@@ -368,9 +368,9 @@ async def authorize_google_sheets(request: Request, current_user: User = Depends
 
 # Stock Data Routes
 @api_router.post("/stocks/sync")
-async def sync_stock_data(current_user: User = Depends(get_current_user)):
+async def sync_stock_data(demo: bool = False, current_user: User = Depends(get_current_user)):
     """Sync stock data from Google Sheets"""
-    if not current_user:
+    if not demo and not current_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
