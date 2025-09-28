@@ -324,8 +324,11 @@ const FilteredStocks = () => {
   const [filterType, setFilterType] = useState('percentage_gains');
   const [loading, setLoading] = useState(false);
   
-  const urlParams = new URLSearchParams(window.location.search);
-  const isDemoMode = urlParams.get('demo') === 'true';
+  // Use same logic as parent Dashboard component
+  const isDemoMode = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('demo') === 'true';
+  }, []);
 
   const fetchFilteredStocks = async (type) => {
     setLoading(true);
