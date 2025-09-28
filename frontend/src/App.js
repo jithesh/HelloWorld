@@ -99,13 +99,20 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
             Real-time stock screening for option trading opportunities
           </p>
         </div>
-        <Button 
-          onClick={onRefresh} 
-          disabled={loading}
-          className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
-        >
-          {loading ? 'Syncing...' : 'Sync Data'}
-        </Button>
+        <div className="flex flex-col items-end gap-2">
+          <Button 
+            onClick={onRefresh} 
+            disabled={loading}
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+          >
+            {loading ? 'Syncing...' : 'Sync Data'}
+          </Button>
+          {summary?.last_updated && (
+            <p className="text-xs text-gray-500">
+              Last synced: {new Date(summary.last_updated).toLocaleTimeString()}
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Key Metrics Cards */}
