@@ -429,6 +429,11 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
+          <div className="text-center py-8">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Loading Market Pulse Dashboard...</p>
+            {isDemoMode && <p className="text-blue-600 text-sm mt-2">Demo Mode</p>}
+          </div>
           <Skeleton className="h-32 w-full" />
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {[...Array(4)].map((_, i) => (
