@@ -522,6 +522,16 @@ const Dashboard = () => {
           </Alert>
         )}
         
+        {/* Debug info */}
+        {process.env.NODE_ENV === 'development' && (
+          <div className="mb-4 p-2 bg-gray-100 text-xs">
+            <p>Loading: {loading.toString()}</p>
+            <p>Dashboard Data: {dashboardData ? 'Present' : 'Null'}</p>
+            <p>Error: {error || 'None'}</p>
+            <p>Total Stocks: {dashboardData?.total_stocks || 'N/A'}</p>
+          </div>
+        )}
+        
         {error && (
           <Alert className={`mb-6 ${error.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
             <AlertDescription className={error.includes('✅') ? 'text-green-700' : 'text-red-700'}>{error}</AlertDescription>
