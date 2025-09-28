@@ -378,9 +378,12 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     try {
+      console.log('Fetching dashboard data, isDemoMode:', isDemoMode);
       if (isDemoMode) {
         // Use demo dashboard in demo mode
+        console.log('Making request to:', `${API}/demo/dashboard`);
         const response = await axios.get(`${API}/demo/dashboard`);
+        console.log('Demo dashboard response:', response.data);
         setDashboardData(response.data);
       } else {
         // Use authenticated dashboard
@@ -389,7 +392,7 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error('Dashboard error:', error);
-      setError(error.response?.data?.detail || 'Failed to load dashboard');
+      setError(error.response?.data?.detail || error.message || 'Failed to load dashboard');
     } finally {
       setLoading(false);
     }
