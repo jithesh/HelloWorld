@@ -480,6 +480,7 @@ const Dashboard = () => {
   }, [user]);
 
   const fetchDashboard = useCallback(async () => {
+    console.log('Starting fetchDashboard, setting loading to true');
     setLoading(true);
     setError(null);
     try {
