@@ -90,7 +90,7 @@ const AuthProvider = ({ children }) => {
 };
 
 // Stock Dashboard Components
-const DashboardSummary = ({ summary, onRefresh, loading }) => {
+const DashboardSummary = ({ summary, onRefresh, loading, autoSyncEnabled, toggleAutoSync, lastSyncTime }) => {
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
