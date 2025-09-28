@@ -94,9 +94,9 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Market Pulse Dashboard</h2>
+          <h2 className="text-3xl font-bold tracking-tight">Stock Screener & Options Analysis</h2>
           <p className="text-muted-foreground">
-            Real-time stock analysis with AI-powered insights
+            Real-time stock screening for option trading opportunities
           </p>
         </div>
         <Button 
