@@ -541,16 +541,33 @@ async def demo_get_dashboard_summary():
                 stock_copy['appearances'] = frequency
                 max_appearances_stocks.append(stock_copy)
         
-        # 3. Five stocks with positive price change (demo: recent data)
+        # 3. Five stocks with positive price change and recent data occurrences (relative to sheet data)
         recent_positive_stocks = []
-        for stock in stock_metrics:
-            # Check if stock has positive price change
-            if stock['percentage_change'] > 0:
-                stock_copy = stock.copy()
-                recent_positive_stocks.append(stock_copy)
         
-        # Sort by percentage change and take top 5
-        recent_positive_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
+        # Find the latest timestamp in the entire dataset to determine what's "recent"
+        all_timestamps = df['timestamp'].tolist()
+        if all_timestamps:
+            latest_overall_timestamp = max(all_timestamps)
+            
+            for stock in stock_metrics:
+                symbol = stock['symbol']
+                symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
+                
+                # Check if stock has positive price change and relatively recent data
+                if stock['percentage_change'] > 0 and len(symbol_data) > 0:
+                    latest_stock_timestamp = symbol_data.iloc[-1]['timestamp']
+                    stock_copy = stock.copy()
+                    stock_copy['latest_timestamp'] = latest_stock_timestamp
+                    stock_copy['recency_score'] = latest_stock_timestamp  # Use timestamp as recency score
+                    recent_positive_stocks.append(stock_copy)
+            
+            # Sort by combination of positive change and recency (most recent positive stocks)
+            recent_positive_stocks.sort(key=lambda x: (x['recency_score'], x['percentage_change']), reverse=True)
+        else:
+            # Fallback if no timestamps available
+            recent_positive_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
+            recent_positive_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
+        
         recent_positive_stocks = recent_positive_stocks[:5]
         
         # Generate AI insights with calculated data
