@@ -483,19 +483,19 @@ const Dashboard = () => {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <StockList 
-                title="🚀 Top Gainers" 
-                stocks={dashboardData?.top_gainers} 
+                title="🔥 Hot Movers" 
+                stocks={dashboardData?.hot_movers} 
                 type="gainers"
               />
               <StockList 
-                title="📉 Top Losers" 
-                stocks={dashboardData?.top_losers} 
-                type="losers"
+                title="📈 Option Opportunities" 
+                stocks={dashboardData?.option_opportunities} 
+                type="opportunities"
               />
               <StockList 
-                title="💎 Best Performers" 
-                stocks={dashboardData?.best_performers} 
-                type="performers"
+                title="⚡ Most Active" 
+                stocks={dashboardData?.most_active_stocks} 
+                type="active"
               />
             </div>
           </TabsContent>
