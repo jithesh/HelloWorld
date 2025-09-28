@@ -472,7 +472,10 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
+  const [lastSyncTime, setLastSyncTime] = useState(null);
   const hasInitialized = useRef(false);
+  const autoSyncInterval = useRef(null);
   
   // Use useMemo to prevent recalculation on every render
   const isDemoMode = useMemo(() => {
