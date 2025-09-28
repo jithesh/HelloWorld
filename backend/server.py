@@ -463,7 +463,7 @@ async def demo_sync_stock_data():
 
 @api_router.get("/demo/dashboard")
 async def demo_get_dashboard_summary():
-    """Demo dashboard - shows summary without authentication"""
+    """Demo dashboard - shows summary without authentication with new metrics"""
     try:
         # Get all stock data
         stock_cursor = db.stocks.find()
@@ -473,11 +473,12 @@ async def demo_get_dashboard_summary():
             return {
                 "message": "No stock data available. Please sync first.",
                 "total_stocks": 0,
-                "top_gainers": [],
-                "top_losers": [],
-                "best_performers": [],
-                "total_portfolio_change": 0,
-                "total_portfolio_percentage": 0,
+                "recent_activity_count": 0,
+                "max_appearances_count": 0,
+                "recent_positive_count": 0,
+                "latest_hour_stocks": [],
+                "max_appearances_stocks": [],
+                "recent_positive_stocks": [],
                 "ai_market_insights": "Demo data not available. Please sync stock data first.",
                 "last_updated": datetime.now(timezone.utc)
             }
@@ -505,40 +506,6 @@ async def demo_get_dashboard_summary():
                     'data_points': len(symbol_data)
                 })
         
-        # Sort for different categories
-        sorted_by_percentage = sorted(stock_metrics, key=lambda x: x['percentage_change'], reverse=True)
-        sorted_by_absolute = sorted(stock_metrics, key=lambda x: x['price_change'], reverse=True)
-        
-        # Top gainers (percentage)
-        top_gainers = sorted_by_percentage[:5]
-        
-        # Top losers (percentage)
-        top_losers = sorted_by_percentage[-5:]
-        
-        # Best performers (absolute price increase)
-        best_performers = sorted_by_absolute[:5]
-        
-        # Calculate portfolio metrics
-        total_portfolio_change = sum(stock['price_change'] for stock in stock_metrics)
-        avg_percentage_change = np.mean([stock['percentage_change'] for stock in stock_metrics]) if stock_metrics else 0
-        
-        # Generate trading focused AI insights
-        positive_stocks = len([s for s in stock_metrics if s['percentage_change'] > 0])
-        
-        ai_insights = f"""🎯 Real-time Stock Analysis:
-        
-📊 Market Activity: {len(latest_hour_stocks)} stocks updated in last hour
-📈 Recent Performance: {len(recent_positive_stocks)} stocks with positive 15min growth  
-⚡ High Frequency: {len(max_appearances_stocks)} stocks with maximum appearances
-🔍 Total Tracking: {len(stock_metrics)} unique stocks monitored
-
-💡 Key Observations:
-• Latest Activity: {"Active market with recent updates" if len(latest_hour_stocks) > 3 else "Moderate activity levels"}
-• Positive Momentum: {len(recent_positive_stocks)} stocks showing recent gains
-• Market Frequency: High-appearance stocks indicate strong trading interest
-• Time-based Analysis: Focus on 15-minute and hourly patterns for trend identification
-• Data Quality: {"Excellent" if len(latest_hour_stocks) > 3 else "Good"} real-time data coverage"""
-        
         # Calculate the three requested metrics
         current_time = datetime.now(timezone.utc)
         one_hour_ago = current_time - timedelta(hours=1)
@@ -553,20 +520,12 @@ async def demo_get_dashboard_summary():
             # Get latest timestamp for this stock
             if len(symbol_data) > 0:
                 latest_timestamp = symbol_data.iloc[-1]['timestamp']
-                # Convert to datetime if it's a string
-                if isinstance(latest_timestamp, str):
-                    try:
-                        latest_timestamp = datetime.fromisoformat(latest_timestamp.replace('Z', '+00:00'))
-                    except:
-                        latest_timestamp = current_time  # Fallback
-                
-                # Check if it's within the last hour
-                if latest_timestamp >= one_hour_ago:
-                    stock['latest_timestamp'] = latest_timestamp
-                    latest_hour_stocks.append(stock)
+                # Since demo data uses current time, all should be within the hour
+                stock['latest_timestamp'] = latest_timestamp
+                latest_hour_stocks.append(stock.copy())
         
-        # Sort by latest timestamp and take top 5
-        latest_hour_stocks.sort(key=lambda x: x.get('latest_timestamp', current_time), reverse=True)
+        # Sort by percentage change and take top 5 for demo
+        latest_hour_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
         latest_hour_stocks = latest_hour_stocks[:5]
         
         # 2. First five stocks with maximum number of appearances
@@ -581,33 +540,36 @@ async def demo_get_dashboard_summary():
         for symbol, frequency in sorted_frequency:
             stock_info = next((s for s in stock_metrics if s['symbol'] == symbol), None)
             if stock_info:
-                stock_info['appearances'] = frequency
-                max_appearances_stocks.append(stock_info)
+                stock_copy = stock_info.copy()
+                stock_copy['appearances'] = frequency
+                max_appearances_stocks.append(stock_copy)
         
-        # 3. Five stocks with positive price change and data occurrence in the last 15 minutes
+        # 3. Five stocks with positive price change (demo: recent data)
         recent_positive_stocks = []
         for stock in stock_metrics:
-            symbol = stock['symbol']
-            symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
-            
-            # Check if stock has positive price change and recent data
-            if stock['percentage_change'] > 0 and len(symbol_data) > 0:
-                latest_timestamp = symbol_data.iloc[-1]['timestamp']
-                # Convert to datetime if it's a string
-                if isinstance(latest_timestamp, str):
-                    try:
-                        latest_timestamp = datetime.fromisoformat(latest_timestamp.replace('Z', '+00:00'))
-                    except:
-                        latest_timestamp = current_time  # Fallback
-                
-                # Check if it's within the last 15 minutes
-                if latest_timestamp >= fifteen_min_ago:
-                    stock['latest_timestamp'] = latest_timestamp
-                    recent_positive_stocks.append(stock)
+            # Check if stock has positive price change
+            if stock['percentage_change'] > 0:
+                stock_copy = stock.copy()
+                recent_positive_stocks.append(stock_copy)
         
         # Sort by percentage change and take top 5
         recent_positive_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
         recent_positive_stocks = recent_positive_stocks[:5]
+        
+        # Generate AI insights with calculated data
+        ai_insights = f"""🎯 Real-time Stock Analysis:
+        
+📊 Market Activity: {len(latest_hour_stocks)} stocks updated in last hour
+📈 Recent Performance: {len(recent_positive_stocks)} stocks with positive 15min growth  
+⚡ High Frequency: {len(max_appearances_stocks)} stocks with maximum appearances
+🔍 Total Tracking: {len(stock_metrics)} unique stocks monitored
+
+💡 Key Observations:
+• Latest Activity: {"Active market with recent updates" if len(latest_hour_stocks) > 3 else "Moderate activity levels"}
+• Positive Momentum: {len(recent_positive_stocks)} stocks showing recent gains
+• Market Frequency: High-appearance stocks indicate strong trading interest
+• Time-based Analysis: Focus on 15-minute and hourly patterns for trend identification
+• Data Quality: {"Excellent" if len(latest_hour_stocks) > 3 else "Good"} real-time data coverage"""
         
         dashboard_data = {
             "total_stocks": len(stock_metrics),
@@ -627,11 +589,12 @@ async def demo_get_dashboard_summary():
         logging.error(f"Demo dashboard error: {str(e)}")
         return {
             "total_stocks": 0,
-            "top_gainers": [],
-            "top_losers": [],
-            "best_performers": [],
-            "total_portfolio_change": 0,
-            "total_portfolio_percentage": 0,
+            "recent_activity_count": 0,
+            "max_appearances_count": 0,
+            "recent_positive_count": 0,
+            "latest_hour_stocks": [],
+            "max_appearances_stocks": [],
+            "recent_positive_stocks": [],
             "ai_market_insights": f"Demo dashboard error: {str(e)}",
             "last_updated": datetime.now(timezone.utc)
         }
