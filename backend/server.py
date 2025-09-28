@@ -129,10 +129,24 @@ async def get_current_user(request: Request) -> Optional[User]:
             return None
             
         # Find user in database
+        current_time = datetime.now(timezone.utc)
         user_data = await db.users.find_one({
-            "session_token": session_token,
-            "expires_at": {"$gt": datetime.now(timezone.utc)}
+            "session_token": session_token
         })
+        
+        # Check expiration
+        if user_data:
+            expires_at = user_data.get('expires_at')
+            if isinstance(expires_at, str):
+                try:
+                    expires_at = datetime.fromisoformat(expires_at.replace('Z', '+00:00'))
+                except:
+                    expires_at = current_time  # Treat as expired if can't parse
+            
+            if expires_at <= current_time:
+                # Session expired, delete it
+                await db.users.delete_one({"session_token": session_token})
+                return None
         
         if user_data:
             return User(**parse_from_mongo(user_data))
