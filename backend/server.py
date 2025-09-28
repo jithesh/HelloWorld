@@ -272,44 +272,90 @@ async def generate_ai_insights(stock_data, analysis_type="market_overview"):
 async def root():
     return {"message": "Stock Analysis API is running"}
 
+async def fetch_live_boom_sheet_data():
+    """Fetch live data from the 7th sheet 'Boom' in Google Sheets"""
+    try:
+        import requests
+        
+        # Your Google Sheet ID
+        sheet_id = "14ne0TE4FQ5s_NzWNa93uLN6OYBWh78iy3mCM0KTon1o"
+        
+        # Make the sheet public accessible or use API key
+        # For now, let's try to fetch it as CSV from the published sheet
+        # Format: https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={SHEET_GID}
+        
+        # The 7th sheet "Boom" - we need to find its GID
+        # Let's try to access it via the published URL
+        boom_sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet=Boom"
+        
+        response = requests.get(boom_sheet_url, timeout=10)
+        
+        if response.status_code == 200:
+            # Parse CSV data
+            import csv
+            import io
+            
+            csv_data = response.text
+            reader = csv.reader(io.StringIO(csv_data))
+            rows = list(reader)
+            
+            return rows
+        else:
+            # Fallback to sample data if live fetch fails
+            logging.warning(f"Could not fetch live data, status: {response.status_code}")
+            return None
+            
+    except Exception as e:
+        logging.error(f"Live data fetch error: {str(e)}")
+        return None
+
 @api_router.post("/demo/sync")
 async def demo_sync_stock_data():
-    """Demo sync - loads sample stock data for testing"""
+    """Sync stock data - tries to fetch live data from Boom sheet, falls back to sample data"""
     try:
-        # Sample data from Boom sheet (7th sheet) - correct structure
-        sample_data = [
-            ["Stock", "Price", "Time", "Alert"],
-            ["SONACOMS", "412", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["HDFCAMC", "5768", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["DMART", "4610.1", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["BSE", "2059.6", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["CROMPTON", "299.4", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["TVSMOTOR", "3423.9", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["JINDALSTEL", "1057.8", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["LT", "3693", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["VEDL", "463.45", "9:17:00 AM", "Alert for Ji FnO Check"],
-            ["SONACOMS", "415.2", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["HDFCAMC", "5785.3", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["DMART", "4625.7", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["BSE", "2070.4", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["CROMPTON", "301.1", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["TVSMOTOR", "3445.2", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["JINDALSTEL", "1065.4", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["LT", "3708.5", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["VEDL", "468.9", "9:20:00 AM", "Alert for Ji FnO Check"],
-            ["SONACOMS", "418.7", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["HDFCAMC", "5799.8", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["DMART", "4635.2", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["BSE", "2075.1", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["CROMPTON", "302.8", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["TVSMOTOR", "3457.6", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["JINDALSTEL", "1071.2", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["LT", "3715.9", "9:23:00 AM", "Alert for Ji FnO Check"],
-            ["VEDL", "471.3", "9:23:00 AM", "Alert for Ji FnO Check"]
-        ]
+        # Try to fetch live data first
+        live_data = await fetch_live_boom_sheet_data()
+        
+        if live_data and len(live_data) > 1:
+            # Use live data from Boom sheet
+            sheet_data = live_data
+            data_source = "Live Boom Sheet"
+        else:
+            # Fallback to sample data
+            sheet_data = [
+                ["Stock", "Price", "Time", "Alert"],
+                ["SONACOMS", "412", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["HDFCAMC", "5768", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["DMART", "4610.1", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["BSE", "2059.6", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["CROMPTON", "299.4", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["TVSMOTOR", "3423.9", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["JINDALSTEL", "1057.8", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["LT", "3693", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["VEDL", "463.45", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["SONACOMS", "415.2", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["HDFCAMC", "5785.3", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["DMART", "4625.7", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["BSE", "2070.4", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["CROMPTON", "301.1", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["TVSMOTOR", "3445.2", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["JINDALSTEL", "1065.4", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["LT", "3708.5", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["VEDL", "468.9", "9:20:00 AM", "Alert for Ji FnO Check"],
+                ["SONACOMS", "418.7", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["HDFCAMC", "5799.8", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["DMART", "4635.2", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["BSE", "2075.1", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["CROMPTON", "302.8", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["TVSMOTOR", "3457.6", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["JINDALSTEL", "1071.2", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["LT", "3715.9", "9:23:00 AM", "Alert for Ji FnO Check"],
+                ["VEDL", "471.3", "9:23:00 AM", "Alert for Ji FnO Check"]
+            ]
+            data_source = "Sample Data (Live fetch failed)"
         
         # Parse and store stock data
-        parsed_stocks = parse_stock_data(sample_data)
+        parsed_stocks = parse_stock_data(sheet_data)
         
         # Clear old data and insert new
         await db.stocks.delete_many({})
@@ -318,11 +364,16 @@ async def demo_sync_stock_data():
             stock_data = StockData(**stock)
             await db.stocks.insert_one(prepare_for_mongo(stock_data.dict()))
         
-        return {"message": f"Demo sync completed - loaded {len(parsed_stocks)} stock entries", "count": len(parsed_stocks)}
+        return {
+            "message": f"Sync completed - loaded {len(parsed_stocks)} stock entries", 
+            "count": len(parsed_stocks),
+            "data_source": data_source,
+            "sheet_rows": len(sheet_data) - 1  # Exclude header
+        }
         
     except Exception as e:
-        logging.error(f"Demo sync error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Demo sync failed: {str(e)}")
+        logging.error(f"Sync error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")
 
 @api_router.get("/demo/dashboard")
 async def demo_get_dashboard_summary():
