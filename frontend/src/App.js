@@ -479,46 +479,37 @@ const Dashboard = () => {
     return urlParams.get('demo') === 'true' || !user;
   }, [user]);
 
-  const fetchDashboard = useCallback(async () => {
+  const fetchDashboard = async () => {
     console.log('Starting fetchDashboard, setting loading to true');
     setLoading(true);
     setError(null);
     try {
-      console.log('Fetching dashboard data, isDemoMode:', isDemoMode);
-      if (isDemoMode) {
-        // Use demo dashboard in demo mode
-        console.log('Making request to:', `${API}/demo/dashboard`);
-        const response = await axios.get(`${API}/demo/dashboard`, {
-          timeout: 10000,
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-        console.log('Demo dashboard response received:', response.status);
-        console.log('Demo dashboard response data:', response.data);
-        
-        if (response.data) {
-          setDashboardData(response.data);
-          console.log('Dashboard data set successfully');
-        } else {
-          console.error('No data in response');
-          setError('No data received from server');
-        }
-      } else {
-        // Use authenticated dashboard
-        const response = await axios.get(`${API}/stocks/dashboard`);
+      console.log('Making request to demo dashboard');
+      const response = await axios.get(`${API}/demo/dashboard`);
+      console.log('Demo dashboard response received:', response.status);
+      console.log('Demo dashboard response data:', response.data);
+      
+      if (response.data) {
+        console.log('About to set dashboard data:', response.data);
         setDashboardData(response.data);
+        console.log('Dashboard data set, current state should update');
+        
+        // Force re-render by also setting a timestamp
+        setTimeout(() => {
+          console.log('Checking if dashboard data was set...');
+        }, 100);
+      } else {
+        console.error('No data in response');
+        setError('No data received from server');
       }
     } catch (error) {
       console.error('Dashboard error details:', error);
-      console.error('Error response:', error.response);
-      console.error('Error message:', error.message);
-      setError(`API Error: ${error.response?.data?.detail || error.message || 'Failed to load dashboard'}`);
+      setError(`API Error: ${error.message || 'Failed to load dashboard'}`);
     } finally {
       console.log('Setting loading to false in finally block');
       setLoading(false);
     }
-  }, [isDemoMode]);
+  };
 
   const syncStockData = async () => {
     setLoading(true);
