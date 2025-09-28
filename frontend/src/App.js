@@ -264,6 +264,7 @@ const StockList = ({ title, stocks, type }) => {
           {type === 'recent' && 'Latest data occurrences in the last hour'}
           {type === 'frequent' && 'Stocks with maximum number of appearances'}
           {type === 'positive' && 'Positive price changes in last 15 minutes'}
+          {type === 'negative' && 'Negative price changes in last 15 minutes'}
         </CardDescription>
       </CardHeader>
       <CardContent>
