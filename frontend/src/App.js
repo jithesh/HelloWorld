@@ -556,7 +556,7 @@ const Dashboard = () => {
     fetchDashboard();
   }, []); // Empty dependency array to run only once
 
-  if (loading) {
+  if (false) { // Temporarily disable loading screen for debugging
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6">
         <div className="max-w-7xl mx-auto space-y-6">
