@@ -697,6 +697,11 @@ const Dashboard = () => {
                 stocks={dashboardData?.recent_positive_stocks} 
                 type="positive"
               />
+              <StockList 
+                title="📉 Recent Declines (15min)" 
+                stocks={dashboardData?.recent_negative_stocks} 
+                type="negative"
+              />
             </div>
           </TabsContent>
 
