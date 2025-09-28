@@ -677,25 +677,34 @@ async def authorize_google_sheets(request: Request, current_user: User = Depends
 # Stock Data Routes
 @api_router.post("/stocks/sync")
 async def sync_stock_data(demo: bool = False, current_user: User = Depends(get_current_user)):
-    """Sync stock data from Google Sheets"""
+    """Sync stock data from Google Sheets with authentication"""
     if not demo and not current_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
-    
+
     try:
-        # For demo, we'll simulate the Boom sheet data structure
-        # In production, this would fetch from the actual Boom sheet (7th sheet)
-        sheet_id = "14ne0TE4FQ5s_NzWNa93uLN6OYBWh78iy3mCM0KTon1o"
+        access_token = None
+        if current_user and current_user.google_access_token:
+            access_token = current_user.google_access_token
         
-        # Simulate fetched data (based on the actual sheet structure)
-        sample_data = [
-            ["Stock", "Price", "Time", "Alert"],
-            ["NETWEB,CARTRADE,RITES,PIGL,VERTOZ", "3647,2499.7,267,180.4,76.13", "9:18:00 AM", "Alert for Ji ID ADX3"],
-            ["VERANDA,CARTRADE,RITES,GODREJAGRO", "215.61,2501.4,268.73,718.95", "9:21:00 AM", "Alert for Ji ID ADX3"],
-            ["STALLION,NETWEB,SJS,CARTRADE", "213.23,3640.6,1489.8,2517.3", "9:24:00 AM", "Alert for Ji ID ADX3"],
-        ]
+        # Fetch live data from authenticated Google Sheets
+        live_data = await fetch_live_boom_sheet_data(access_token)
+        
+        if live_data and len(live_data) > 1:
+            sheet_data = live_data
+            data_source = "Authenticated Google Sheets"
+        else:
+            # Fallback to sample data if authentication fails
+            sheet_data = [
+                ["Stock", "Price", "Time", "Alert"],
+                ["SONACOMS", "412", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["HDFCAMC", "5768", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["DMART", "4610.1", "9:17:00 AM", "Alert for Ji FnO Check"],
+                ["BSE", "2059.6", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ]
+            data_source = "Sample Data (Authentication required for live data)"
         
         # Parse and store stock data
-        parsed_stocks = parse_stock_data(sample_data)
+        parsed_stocks = parse_stock_data(sheet_data)
         
         # Clear old data and insert new
         await db.stocks.delete_many({})
@@ -704,7 +713,12 @@ async def sync_stock_data(demo: bool = False, current_user: User = Depends(get_c
             stock_data = StockData(**stock)
             await db.stocks.insert_one(prepare_for_mongo(stock_data.dict()))
         
-        return {"message": f"Synced {len(parsed_stocks)} stock entries", "count": len(parsed_stocks)}
+        return {
+            "message": f"Sync completed - loaded {len(parsed_stocks)} stock entries", 
+            "count": len(parsed_stocks),
+            "data_source": data_source,
+            "authentication": "required" if not access_token else "authenticated"
+        }
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")
