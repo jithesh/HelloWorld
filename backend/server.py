@@ -523,7 +523,7 @@ async def demo_get_dashboard_summary():
         
         # Sort by most recent timestamp in the sheet data (not current time)
         latest_hour_stocks.sort(key=lambda x: x.get('latest_timestamp', datetime.min.replace(tzinfo=timezone.utc)), reverse=True)
-        latest_hour_stocks = latest_hour_stocks[:5]
+        latest_hour_stocks = latest_hour_stocks[:10]  # Increased from 5 to 10
         
         # 2. First five stocks with maximum number of appearances
         stock_frequency = {}
