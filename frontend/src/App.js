@@ -112,7 +112,7 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-blue-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Stocks</CardTitle>
+            <CardTitle className="text-sm font-medium">Stocks Tracked</CardTitle>
             <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
@@ -120,52 +120,52 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
               {summary?.total_stocks || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Active tracking
+              Live monitoring
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Portfolio Change</CardTitle>
+            <CardTitle className="text-sm font-medium">Trading Opportunities</CardTitle>
             <div className="h-4 w-4 bg-emerald-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-emerald-700">
-              ₹{summary?.total_portfolio_change || 0}
+              {summary?.trading_opportunities || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {summary?.total_portfolio_percentage >= 0 ? '+' : ''}{summary?.total_portfolio_percentage?.toFixed(2) || 0}% today
+              Positive growth stocks
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Gainer</CardTitle>
+            <CardTitle className="text-sm font-medium">Hot Stock</CardTitle>
             <div className="h-4 w-4 bg-amber-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-amber-700">
-              {summary?.top_gainers?.[0]?.symbol || 'N/A'}
+              {summary?.hot_stock?.symbol || 'N/A'}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{summary?.top_gainers?.[0]?.percentage_change?.toFixed(2) || 0}%
+              +{summary?.hot_stock?.percentage_change?.toFixed(2) || 0}% momentum
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Top Loser</CardTitle>
+            <CardTitle className="text-sm font-medium">Most Active</CardTitle>
             <div className="h-4 w-4 bg-red-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-700">
-              {summary?.top_losers?.[0]?.symbol || 'N/A'}
+              {summary?.most_active?.symbol || 'N/A'}
             </div>
             <p className="text-xs text-muted-foreground">
-              {summary?.top_losers?.[0]?.percentage_change?.toFixed(2) || 0}%
+              {summary?.most_active?.frequency || 0} alerts today
             </p>
           </CardContent>
         </Card>
