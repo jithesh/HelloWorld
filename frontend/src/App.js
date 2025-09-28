@@ -577,13 +577,32 @@ const Dashboard = () => {
 
   useEffect(() => {
     if (!hasInitialized.current) {
-      console.log('useEffect triggered FIRST TIME, calling fetchDashboard');
+      console.log('useEffect triggered FIRST TIME, calling fetchDashboard and starting auto-sync');
       hasInitialized.current = true;
       fetchDashboard();
+      
+      // Start auto-sync after initial load
+      if (autoSyncEnabled) {
+        startAutoSync();
+      }
     } else {
       console.log('useEffect triggered AGAIN, but skipping to prevent duplicates');
     }
+
+    // Cleanup function to stop auto-sync when component unmounts
+    return () => {
+      stopAutoSync();
+    };
   }, []); // Empty dependency array to run only once
+
+  // Effect to handle auto-sync enable/disable
+  useEffect(() => {
+    if (autoSyncEnabled && hasInitialized.current) {
+      startAutoSync();
+    } else {
+      stopAutoSync();
+    }
+  }, [autoSyncEnabled]);
 
   if (false) { // Temporarily disable loading screen for debugging
     return (
