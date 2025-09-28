@@ -193,13 +193,13 @@ const DashboardSummary = ({ summary, onRefresh, loading, autoSyncEnabled, toggle
 
         <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Recent Gains</CardTitle>
+            <CardTitle className="text-sm font-medium">Recent Gains (15min)</CardTitle>
             <div className="h-4 w-4 bg-red-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="space-y-1">
               {summary?.recent_positive_stocks?.length > 0 ? (
-                summary.recent_positive_stocks.slice(0, 5).map((stock, index) => (
+                summary.recent_positive_stocks.slice(0, 10).map((stock, index) => (
                   <div key={stock.symbol} className="text-sm font-semibold text-red-700">
                     {index + 1}. {stock.symbol} (+{stock.percentage_change?.toFixed(2) || 0}%)
                   </div>
@@ -210,6 +210,29 @@ const DashboardSummary = ({ summary, onRefresh, loading, autoSyncEnabled, toggle
             </div>
             <p className="text-xs text-muted-foreground mt-2">
               Last 15min positive
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-purple-50 to-violet-50 border-purple-200">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Recent Gains (5min)</CardTitle>
+            <div className="h-4 w-4 bg-purple-500 rounded-full"></div>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-1">
+              {summary?.recent_positive_5min_stocks?.length > 0 ? (
+                summary.recent_positive_5min_stocks.slice(0, 10).map((stock, index) => (
+                  <div key={stock.symbol} className="text-sm font-semibold text-purple-700">
+                    {index + 1}. {stock.symbol} (+{stock.percentage_change?.toFixed(2) || 0}%)
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500">No recent 5min gains</div>
+              )}
+            </div>
+            <p className="text-xs text-muted-foreground mt-2">
+              Last 5min positive
             </p>
           </CardContent>
         </Card>
