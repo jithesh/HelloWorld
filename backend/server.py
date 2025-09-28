@@ -385,8 +385,21 @@ async def demo_get_dashboard_summary():
         total_portfolio_change = sum(stock['price_change'] for stock in stock_metrics)
         avg_percentage_change = np.mean([stock['percentage_change'] for stock in stock_metrics]) if stock_metrics else 0
         
-        # Generate simplified AI insights (faster)
-        ai_insights = "🎯 Demo Market Analysis: Based on current data, the market shows mixed signals with some stocks gaining momentum while others consolidate. Key sectors like technology and renewable energy continue to attract investor attention. Consider diversification across growth and value stocks for balanced exposure."
+        # Generate option trading focused AI insights
+        positive_stocks = len([s for s in stock_metrics if s['percentage_change'] > 0])
+        high_activity = sorted([(s['symbol'], s.get('frequency', 1)) for s in stock_metrics], key=lambda x: x[1], reverse=True)[:3]
+        
+        ai_insights = f"""🎯 Option Trading Analysis:
+        
+📈 Market Sentiment: {positive_stocks}/{len(stock_metrics)} stocks showing positive momentum
+⚡ High Activity: {', '.join([f"{s[0]} ({s[1]} alerts)" for s in high_activity])}
+🔥 Hot Pick: {top_gainers[0]['symbol']} with {top_gainers[0]['percentage_change']:.2f}% growth
+
+💡 Trading Recommendations:
+• Call Options: Consider {', '.join([s['symbol'] for s in top_gainers[:2]])} for bullish momentum
+• Active Monitoring: Track {', '.join([s[0] for s in high_activity[:2]])} for volatility opportunities
+• Time Strategy: Focus on stocks with consistent 15-minute growth patterns
+• Risk Level: Current market shows {'moderate' if positive_stocks > len(stock_metrics)/2 else 'high'} volatility"""
         
         # Calculate trading-specific metrics
         positive_growth_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
