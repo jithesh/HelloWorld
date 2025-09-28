@@ -470,8 +470,11 @@ const Dashboard = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   
-  const urlParams = new URLSearchParams(window.location.search);
-  const isDemoMode = urlParams.get('demo') === 'true' || !user;
+  // Use useMemo to prevent recalculation on every render
+  const isDemoMode = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('demo') === 'true' || !user;
+  }, [user]);
 
   const fetchDashboard = async () => {
     setLoading(true);
