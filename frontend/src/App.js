@@ -101,18 +101,30 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
           </p>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <Button 
-            onClick={onRefresh} 
-            disabled={loading}
-            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
-          >
-            {loading ? 'Syncing...' : 'Sync Data'}
-          </Button>
-          {summary?.last_updated && (
-            <p className="text-xs text-gray-500">
-              Last synced: {new Date(summary.last_updated).toLocaleTimeString()}
-            </p>
-          )}
+          <div className="flex gap-2">
+            <Button 
+              onClick={onRefresh} 
+              disabled={loading}
+              className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700"
+            >
+              {loading ? 'Syncing...' : 'Sync Now'}
+            </Button>
+            <Button 
+              onClick={toggleAutoSync}
+              variant={autoSyncEnabled ? "default" : "outline"}
+              className={autoSyncEnabled ? "bg-green-600 hover:bg-green-700" : ""}
+            >
+              Auto-Sync {autoSyncEnabled ? 'ON' : 'OFF'}
+            </Button>
+          </div>
+          <div className="text-xs text-gray-500 text-right">
+            {lastSyncTime && (
+              <p>Last synced: {lastSyncTime.toLocaleTimeString()}</p>
+            )}
+            {autoSyncEnabled && (
+              <p className="text-green-600">⚡ Auto-sync every 30s</p>
+            )}
+          </div>
         </div>
       </div>
 
