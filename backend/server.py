@@ -396,15 +396,15 @@ async def fetch_live_boom_sheet_data(access_token: str = None):
 
 @api_router.post("/demo/sync")
 async def demo_sync_stock_data():
-    """Sync stock data - tries to fetch live data from Boom sheet, falls back to sample data"""
+    """Sync stock data - tries to fetch live data from Boom sheet with correct GID"""
     try:
-        # Try to fetch live data first
-        live_data = await fetch_live_boom_sheet_data()
+        # Try to fetch live data first (no auth token in demo)
+        live_data = await fetch_live_boom_sheet_data(access_token=None)
         
         if live_data and len(live_data) > 1:
             # Use live data from Boom sheet
             sheet_data = live_data
-            data_source = "Live Boom Sheet"
+            data_source = "Live Boom Sheet (GID: 304037161)"
         else:
             # Fallback to sample data
             sheet_data = [
@@ -437,7 +437,7 @@ async def demo_sync_stock_data():
                 ["LT", "3715.9", "9:23:00 AM", "Alert for Ji FnO Check"],
                 ["VEDL", "471.3", "9:23:00 AM", "Alert for Ji FnO Check"]
             ]
-            data_source = "Sample Data (Live fetch failed)"
+            data_source = "Sample Data (Authentication required for live access)"
         
         # Parse and store stock data
         parsed_stocks = parse_stock_data(sheet_data)
@@ -453,12 +453,13 @@ async def demo_sync_stock_data():
             "message": f"Sync completed - loaded {len(parsed_stocks)} stock entries", 
             "count": len(parsed_stocks),
             "data_source": data_source,
-            "sheet_rows": len(sheet_data) - 1  # Exclude header
+            "sheet_rows": len(sheet_data) - 1,  # Exclude header
+            "authentication_note": "Use Google Sign-in for live data access"
         }
         
     except Exception as e:
-        logging.error(f"Sync error: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Sync failed: {str(e)}")
+        logging.error(f"Demo sync error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Demo sync failed: {str(e)}")
 
 @api_router.get("/demo/dashboard")
 async def demo_get_dashboard_summary():
