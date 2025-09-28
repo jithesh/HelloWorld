@@ -433,19 +433,27 @@ const Dashboard = () => {
 
   const syncStockData = async () => {
     setLoading(true);
+    setError(null);
     try {
       console.log('Syncing stock data, isDemoMode:', isDemoMode);
+      let syncResponse;
       if (isDemoMode) {
         // Use demo sync in demo mode
         console.log('Making sync request to:', `${API}/demo/sync`);
-        const response = await axios.post(`${API}/demo/sync`);
-        console.log('Demo sync response:', response.data);
+        syncResponse = await axios.post(`${API}/demo/sync`);
+        console.log('Demo sync response:', syncResponse.data);
       } else {
         // Use authenticated sync
-        await axios.post(`${API}/stocks/sync`);
+        syncResponse = await axios.post(`${API}/stocks/sync`);
       }
+      
       // Refresh dashboard after sync
       await fetchDashboard();
+      
+      // Show success message briefly
+      setError(`✅ Sync completed! Loaded ${syncResponse.data.count} stock entries`);
+      setTimeout(() => setError(null), 3000);
+      
     } catch (error) {
       console.error('Sync error:', error);
       setError('Failed to sync stock data: ' + (error.message || 'Unknown error'));
