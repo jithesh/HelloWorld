@@ -170,15 +170,15 @@ async def fetch_google_sheet_data(sheet_id: str, range_name: str, access_token: 
         raise HTTPException(status_code=400, detail=f"Failed to fetch sheet data: {str(e)}")
 
 def parse_stock_data(raw_data):
-    """Parse the comma-separated stock data from Google Sheets"""
+    """Parse the Boom sheet stock data - each row is one stock entry"""
     parsed_stocks = []
     
     for row in raw_data[1:]:  # Skip header
         if len(row) >= 4:
-            stocks = row[0].split(',')
-            prices_str = row[1].split(',')
+            stock_symbol = row[0].strip()
+            price_str = row[1]
             timestamp_str = row[2]
-            alert_id = row[3]
+            alert_msg = row[3]
             
             # Parse timestamp
             try:
@@ -191,23 +191,20 @@ def parse_stock_data(raw_data):
             except:
                 timestamp = datetime.now(timezone.utc)
             
-            # Parse individual stock prices
-            for i, stock in enumerate(stocks):
-                if i < len(prices_str):
-                    try:
-                        price = float(prices_str[i])
-                        parsed_stocks.append({
-                            'symbol': stock.strip(),
-                            'price': price,
-                            'timestamp': timestamp,
-                            'alert_id': alert_id,
-                            'raw_data': {
-                                'original_row': row,
-                                'stock_index': i
-                            }
-                        })
-                    except ValueError:
-                        continue
+            # Parse price
+            try:
+                price = float(price_str)
+                parsed_stocks.append({
+                    'symbol': stock_symbol,
+                    'price': price,
+                    'timestamp': timestamp,
+                    'alert_id': alert_msg,
+                    'raw_data': {
+                        'original_row': row
+                    }
+                })
+            except ValueError:
+                continue
     
     return parsed_stocks
 
