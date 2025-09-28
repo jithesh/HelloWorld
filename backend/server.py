@@ -155,19 +155,22 @@ async def get_current_user(request: Request) -> Optional[User]:
         return None
 
 async def fetch_google_sheet_data(sheet_id: str, range_name: str, access_token: str):
-    """Fetch data from Google Sheets"""
+    """Fetch data from Google Sheets - specifically from Boom sheet"""
     try:
         credentials = Credentials(token=access_token)
         service = build('sheets', 'v4', credentials=credentials)
         
+        # Fetch from Boom sheet (7th sheet) - adjust range if needed
+        boom_sheet_range = "Boom!A:D"  # Boom sheet, columns A-D
+        
         result = service.spreadsheets().values().get(
             spreadsheetId=sheet_id,
-            range=range_name
+            range=boom_sheet_range
         ).execute()
         
         return result.get('values', [])
     except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to fetch sheet data: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Failed to fetch Boom sheet data: {str(e)}")
 
 def parse_stock_data(raw_data):
     """Parse the Boom sheet stock data - each row is one stock entry"""
