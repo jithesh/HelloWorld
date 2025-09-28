@@ -472,6 +472,7 @@ const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const hasInitialized = useRef(false);
   
   // Use useMemo to prevent recalculation on every render
   const isDemoMode = useMemo(() => {
