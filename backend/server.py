@@ -340,13 +340,14 @@ async def fetch_live_boom_sheet_data():
         # Your Google Sheet ID
         sheet_id = "14ne0TE4FQ5s_NzWNa93uLN6OYBWh78iy3mCM0KTon1o"
         
-        # Make the sheet public accessible or use API key
-        # For now, let's try to fetch it as CSV from the published sheet
-        # Format: https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid={SHEET_GID}
+        # Try multiple methods to access the 7th sheet "Boom"
         
-        # The 7th sheet "Boom" - we need to find its GID
-        # Let's try to access it via the published URL
+        # Method 1: Try with sheet name "Boom"
         boom_sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet=Boom"
+        
+        # Method 2: Also try common GIDs for 7th sheet (sheets are often numbered)
+        # Common GID patterns: 0, 1, 2, ... or random numbers
+        potential_gids = ["118779867", "0", "1", "2", "3", "4", "5", "6"]  # Using the GID from your original URL
         
         response = requests.get(boom_sheet_url, timeout=10)
         
