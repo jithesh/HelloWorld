@@ -559,14 +559,29 @@ const LandingPage = () => {
           </div>
         </div>
 
-        <Button 
-          onClick={login}
-          size="lg"
-          className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-4 text-lg font-semibold shadow-2xl"
-          data-testid="get-started-btn"
-        >
-          Get Started with Google
-        </Button>
+        <div className="space-y-4">
+          <Button 
+            onClick={login}
+            size="lg"
+            className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 py-4 text-lg font-semibold shadow-2xl"
+            data-testid="get-started-btn"
+          >
+            Get Started with Google
+          </Button>
+          
+          <div className="text-center">
+            <p className="text-gray-400 text-xs mb-2">Or try the demo</p>
+            <Button 
+              onClick={() => window.location.href = '/dashboard?demo=true'}
+              variant="outline"
+              size="lg"
+              className="border-white/20 text-white hover:bg-white/10 px-6 py-3"
+              data-testid="demo-btn"
+            >
+              📊 View Demo Dashboard
+            </Button>
+          </div>
+        </div>
         
         <p className="text-gray-400 text-sm mt-4">
           Secure authentication • No data stored • Privacy first
