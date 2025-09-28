@@ -960,6 +960,15 @@ async def get_filtered_stocks(
             # Stocks with positive price growth over the day
             filtered_stocks = sorted([s for s in stock_metrics if s['percentage_change'] > 0], 
                                    key=lambda x: x['percentage_change'], reverse=True)[:limit]
+        elif filter_type == "max_current_movement":
+            # Maximum current movement (highest percentage change - both positive and negative)
+            filtered_stocks = sorted(stock_metrics, key=lambda x: abs(x['percentage_change']), reverse=True)[:limit]
+        elif filter_type == "max_price_change":
+            # Maximum absolute price change in rupees
+            filtered_stocks = sorted(stock_metrics, key=lambda x: abs(x['price_change']), reverse=True)[:limit]
+        elif filter_type == "max_appearances":
+            # Maximum number of appearances in the sheet
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['frequency'], reverse=True)[:limit]
         elif filter_type == "last_5min":
             # Highest growth in last 5 minutes
             filtered_stocks = sorted(stock_metrics, key=lambda x: x['last_5min_growth'], reverse=True)[:limit]
