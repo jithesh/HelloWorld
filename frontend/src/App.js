@@ -28,7 +28,7 @@ const useAuth = () => {
 
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     checkAuth();
@@ -322,7 +322,7 @@ const StockList = ({ title, stocks, type }) => {
 const FilteredStocks = () => {
   const [filteredStocks, setFilteredStocks] = useState([]);
   const [filterType, setFilterType] = useState('percentage_gains');
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   // Use same logic as parent Dashboard component
   const isDemoMode = useMemo(() => {
@@ -470,7 +470,7 @@ const FilteredStocks = () => {
 const Dashboard = () => {
   const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
   // Use useMemo to prevent recalculation on every render
