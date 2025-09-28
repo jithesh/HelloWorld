@@ -568,7 +568,7 @@ async def demo_get_dashboard_summary():
             recent_positive_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
             recent_positive_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
         
-        recent_positive_stocks = recent_positive_stocks[:5]
+        recent_positive_stocks = recent_positive_stocks[:10]  # Increased from 5 to 10
         
         # Generate AI insights with calculated data
         ai_insights = f"""🎯 Sheet Data Analysis:
