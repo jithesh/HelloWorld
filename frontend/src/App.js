@@ -513,7 +513,7 @@ const Dashboard = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [isDemoMode]);
 
   const syncStockData = async () => {
     setLoading(true);
