@@ -554,19 +554,19 @@ const Dashboard = () => {
 
             <div className="grid gap-6 lg:grid-cols-3">
               <StockList 
-                title="🔥 Hot Movers" 
-                stocks={dashboardData?.hot_movers} 
-                type="gainers"
+                title="🕐 Latest Activity (Last Hour)" 
+                stocks={dashboardData?.latest_hour_stocks} 
+                type="recent"
               />
               <StockList 
-                title="📈 Option Opportunities" 
-                stocks={dashboardData?.option_opportunities} 
-                type="opportunities"
+                title="📊 Maximum Appearances" 
+                stocks={dashboardData?.max_appearances_stocks} 
+                type="frequent"
               />
               <StockList 
-                title="⚡ Most Active" 
-                stocks={dashboardData?.most_active_stocks} 
-                type="active"
+                title="📈 Recent Positive (15min)" 
+                stocks={dashboardData?.recent_positive_stocks} 
+                type="positive"
               />
             </div>
           </TabsContent>
