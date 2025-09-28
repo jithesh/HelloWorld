@@ -388,13 +388,30 @@ async def demo_get_dashboard_summary():
         # Generate simplified AI insights (faster)
         ai_insights = "🎯 Demo Market Analysis: Based on current data, the market shows mixed signals with some stocks gaining momentum while others consolidate. Key sectors like technology and renewable energy continue to attract investor attention. Consider diversification across growth and value stocks for balanced exposure."
         
+        # Calculate trading-specific metrics
+        positive_growth_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
+        
+        # Most active stock (by frequency)
+        stock_frequency = {}
+        for stock in all_stocks:
+            symbol = stock['symbol']
+            stock_frequency[symbol] = stock_frequency.get(symbol, 0) + 1
+        
+        most_active = max(stock_frequency.items(), key=lambda x: x[1]) if stock_frequency else ('N/A', 0)
+        most_active_stock = next((s for s in stock_metrics if s['symbol'] == most_active[0]), None)
+        
         dashboard_data = {
             "total_stocks": len(stock_metrics),
-            "top_gainers": top_gainers,
-            "top_losers": top_losers,
-            "best_performers": best_performers,
-            "total_portfolio_change": round(total_portfolio_change, 2),
-            "total_portfolio_percentage": round(avg_percentage_change, 2),
+            "trading_opportunities": len(positive_growth_stocks),
+            "hot_stock": top_gainers[0] if top_gainers else None,
+            "most_active": {
+                "symbol": most_active[0],
+                "frequency": most_active[1],
+                **most_active_stock} if most_active_stock else {"symbol": "N/A", "frequency": 0},
+            "hot_movers": top_gainers,
+            "option_opportunities": positive_growth_stocks[:5],
+            "most_active_stocks": sorted([s for s in stock_metrics if s['symbol'] in [freq[0] for freq in sorted(stock_frequency.items(), key=lambda x: x[1], reverse=True)[:5]]], 
+                                       key=lambda x: x['percentage_change'], reverse=True),
             "ai_market_insights": ai_insights,
             "last_updated": datetime.now(timezone.utc)
         }
