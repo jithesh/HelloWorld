@@ -334,25 +334,46 @@ const FilteredStocks = () => {
                   </div>
                   <div className="flex gap-4 items-center">
                     <div className="text-right">
-                      <div className="text-sm font-medium">Change</div>
+                      <div className="text-sm font-medium">
+                        {filterType === 'most_frequent' ? 'Frequency' : 
+                         filterType === 'last_5min' ? '5min Growth' :
+                         filterType === 'last_15min' ? '15min Growth' :
+                         filterType === 'last_1hour' ? '1hr Growth' :
+                         filterType === 'most_attractive' ? 'Score' :
+                         'Day Change'}
+                      </div>
                       <div className="text-sm text-gray-600">
-                        {stock.percentage_change > 0 ? '+' : ''}{stock.percentage_change?.toFixed(2)}%
+                        {filterType === 'most_frequent' ? `${stock.frequency || 0} alerts` :
+                         filterType === 'last_5min' ? `${stock.last_5min_growth?.toFixed(2) || 0}%` :
+                         filterType === 'last_15min' ? `${stock.last_15min_growth?.toFixed(2) || 0}%` :
+                         filterType === 'last_1hour' ? `${stock.last_1hour_growth?.toFixed(2) || 0}%` :
+                         filterType === 'most_attractive' ? `${stock.attractiveness_score?.toFixed(1) || 0}/10` :
+                         `${stock.percentage_change > 0 ? '+' : ''}${stock.percentage_change?.toFixed(2)}%`}
                       </div>
                     </div>
-                    {filterType === 'consistent_growth' && (
+                    {(filterType === 'consistent_growth' || filterType === 'active_positive') && (
                       <div className="text-right">
-                        <div className="text-sm font-medium">Consistency</div>
+                        <div className="text-sm font-medium">
+                          {filterType === 'consistent_growth' ? 'Consistency' : 'Activity'}
+                        </div>
                         <div className="text-sm text-gray-600">
-                          {stock.consistency_score?.toFixed(1)}/100
+                          {filterType === 'consistent_growth' ? 
+                           `${stock.consistency_score?.toFixed(1) || 0}/100` :
+                           `${stock.frequency || 0} times`}
                         </div>
                       </div>
                     )}
-                    <Badge 
-                      variant={stock.percentage_change >= 0 ? "default" : "destructive"}
-                      className={stock.percentage_change >= 0 ? "bg-emerald-100 text-emerald-800" : ""}
-                    >
-                      ₹{stock.price_change > 0 ? '+' : ''}{stock.price_change?.toFixed(2)}
-                    </Badge>
+                    <div className="flex flex-col gap-1">
+                      <Badge 
+                        variant={stock.percentage_change >= 0 ? "default" : "destructive"}
+                        className={stock.percentage_change >= 0 ? "bg-emerald-100 text-emerald-800" : ""}
+                      >
+                        ₹{stock.current_price?.toFixed(2)}
+                      </Badge>
+                      <Badge variant="outline" className="text-xs">
+                        {stock.percentage_change > 0 ? '+' : ''}{stock.percentage_change?.toFixed(2)}%
+                      </Badge>
+                    </div>
                   </div>
                 </div>
               ))
