@@ -272,6 +272,43 @@ async def generate_ai_insights(stock_data, analysis_type="market_overview"):
 async def root():
     return {"message": "Stock Analysis API is running"}
 
+@api_router.post("/demo/sync")
+async def demo_sync_stock_data():
+    """Demo sync - loads sample stock data for testing"""
+    try:
+        # Sample data based on your actual Google Sheet structure
+        sample_data = [
+            ["Stock", "Price", "Time", "Alert"],
+            ["NETWEB,CARTRADE,RITES,PIGL,VERTOZ,GODREJAGRO,DMART,BSE", "3647,2499.7,267,180.4,76.13,714.75,4608,2063.4", "9:18:00 AM", "Alert for Ji ID ADX3"],
+            ["VERANDA,CARTRADE,RITES,GODREJAGRO,ICICIGI,PANACHE", "215.61,2501.4,268.73,718.95,1895.2,404.12", "9:21:00 AM", "Alert for Ji ID ADX3"],
+            ["STALLION,NETWEB,SJS,CARTRADE,HDFCLIFE,ICICIGI", "213.23,3640.6,1489.8,2517.3,767.2,1899.7", "9:24:00 AM", "Alert for Ji ID ADX3"],
+            ["QPOWER,STALLION,STYLEBAAZA,CARTRADE,HEMIPROP,VERTOZ", "1023.25,213.52,360.75,2534.1,164.2,75.56", "9:27:00 AM", "Alert for Ji ID ADX3"],
+            ["STYLEBAAZA,LIQUIDCASE,SJS,AUBANK,AURUM,FCL", "361.5,110.65,1500,752.1,172.85,256.57", "9:30:00 AM", "Alert for Ji ID ADX3"],
+            ["CARTRADE,ICICIGI,MCL,UNITEDPOLY,AURUM,APLAPOLLO", "2527.9,1904.1,59.56,51,179.84,1704.4", "9:33:00 AM", "Alert for Ji ID ADX3"],
+            ["BORORENEW,RITES,HDFCLIFE,GODREJAGRO,AUBANK,KAVDEFENCE", "579.4,266.42,768.55,708.95,749.75,140.71", "9:36:00 AM", "Alert for Ji ID ADX3"],
+        ]
+        
+        # Parse and store stock data
+        parsed_stocks = parse_stock_data(sample_data)
+        
+        # Clear old data and insert new
+        await db.stocks.delete_many({})
+        
+        for stock in parsed_stocks:
+            stock_data = StockData(**stock)
+            await db.stocks.insert_one(prepare_for_mongo(stock_data.dict()))
+        
+        return {"message": f"Demo sync completed - loaded {len(parsed_stocks)} stock entries", "count": len(parsed_stocks)}
+        
+    except Exception as e:
+        logging.error(f"Demo sync error: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Demo sync failed: {str(e)}")
+
+@api_router.get("/demo/dashboard")
+async def demo_get_dashboard_summary():
+    """Demo dashboard - shows summary without authentication"""
+    return await get_dashboard_summary(demo=True)
+
 # Emergent Auth Integration
 @api_router.post("/auth/session")
 async def create_session(request: Request, response: Response):
