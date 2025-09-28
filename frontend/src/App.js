@@ -135,45 +135,45 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
 
         <Card className="bg-gradient-to-br from-emerald-50 to-green-50 border-emerald-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Trading Opportunities</CardTitle>
+            <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
             <div className="h-4 w-4 bg-emerald-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-emerald-700">
-              {summary?.trading_opportunities || 0}
+              {summary?.recent_activity_count || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              Positive growth stocks
+              Last hour updates
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-amber-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Hot Stock</CardTitle>
+            <CardTitle className="text-sm font-medium">High Frequency</CardTitle>
             <div className="h-4 w-4 bg-amber-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-amber-700">
-              {summary?.hot_stock?.symbol || 'N/A'}
+              {summary?.max_appearances_count || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              +{summary?.hot_stock?.percentage_change?.toFixed(2) || 0}% momentum
+              Maximum appearances
             </p>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-200">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Most Active</CardTitle>
+            <CardTitle className="text-sm font-medium">Recent Gains</CardTitle>
             <div className="h-4 w-4 bg-red-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-red-700">
-              {summary?.most_active?.symbol || 'N/A'}
+              {summary?.recent_positive_count || 0}
             </div>
             <p className="text-xs text-muted-foreground">
-              {summary?.most_active?.frequency || 0} alerts today
+              Last 15min positive
             </p>
           </CardContent>
         </Card>
