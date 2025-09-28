@@ -748,15 +748,72 @@ async def get_filtered_stocks(
                     'volatility': price_std
                 })
         
+        # Calculate additional metrics for trading analysis
+        current_time = datetime.now(timezone.utc)
+        
+        # Time-based analysis
+        for stock in stock_metrics:
+            symbol = stock['symbol']
+            symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
+            
+            # Calculate frequency
+            stock['frequency'] = len(symbol_data)
+            
+            # Time-based growth calculation
+            stock['last_5min_growth'] = 0
+            stock['last_15min_growth'] = 0
+            stock['last_1hour_growth'] = 0
+            
+            if len(symbol_data) >= 2:
+                recent_data = symbol_data.tail(3)  # Last 3 entries
+                if len(recent_data) >= 2:
+                    stock['last_5min_growth'] = ((recent_data.iloc[-1]['price'] - recent_data.iloc[-2]['price']) / recent_data.iloc[-2]['price']) * 100
+                
+                if len(recent_data) >= 3:
+                    stock['last_15min_growth'] = ((recent_data.iloc[-1]['price'] - recent_data.iloc[-3]['price']) / recent_data.iloc[-3]['price']) * 100
+                
+                # Last hour growth (assuming each entry is ~3 minutes apart)
+                hour_data = symbol_data.tail(20) if len(symbol_data) >= 20 else symbol_data
+                if len(hour_data) >= 2:
+                    stock['last_1hour_growth'] = ((hour_data.iloc[-1]['price'] - hour_data.iloc[0]['price']) / hour_data.iloc[0]['price']) * 100
+            
+            # Attractiveness score (combination of growth, consistency, and activity)
+            stock['attractiveness_score'] = (
+                stock['percentage_change'] * 0.4 + 
+                stock['consistency_score'] * 0.3 + 
+                (stock['frequency'] / 10) * 0.3
+            )
+        
         # Apply filters
-        if filter_type == "percentage_gains":
-            filtered_stocks = sorted(stock_metrics, key=lambda x: x['percentage_change'], reverse=True)[:limit]
-        elif filter_type == "absolute_gains":
-            filtered_stocks = sorted(stock_metrics, key=lambda x: x['price_change'], reverse=True)[:limit]
-        elif filter_type == "consistent_growth":
-            # Filter stocks with positive growth and low volatility
+        if filter_type == "consistent_growth":
+            # Most consistent growth over time
             growth_stocks = [s for s in stock_metrics if s['percentage_change'] > 0]
             filtered_stocks = sorted(growth_stocks, key=lambda x: x['consistency_score'], reverse=True)[:limit]
+        elif filter_type == "most_frequent":
+            # Stocks that repeated maximum times
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['frequency'], reverse=True)[:limit]
+        elif filter_type == "positive_growth":
+            # Stocks with positive price growth over the day
+            filtered_stocks = sorted([s for s in stock_metrics if s['percentage_change'] > 0], 
+                                   key=lambda x: x['percentage_change'], reverse=True)[:limit]
+        elif filter_type == "last_5min":
+            # Highest growth in last 5 minutes
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['last_5min_growth'], reverse=True)[:limit]
+        elif filter_type == "last_15min":
+            # Highest growth in last 15 minutes
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['last_15min_growth'], reverse=True)[:limit]
+        elif filter_type == "last_1hour":
+            # Highest growth in last 1 hour
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['last_1hour_growth'], reverse=True)[:limit]
+        elif filter_type == "most_attractive":
+            # Most attractive stocks to buy based on all parameters
+            filtered_stocks = sorted(stock_metrics, key=lambda x: x['attractiveness_score'], reverse=True)[:limit]
+        elif filter_type == "active_positive":
+            # Most active stocks with positive growth (current time preference)
+            active_positive = [s for s in stock_metrics if s['percentage_change'] > 0 and s['frequency'] >= 2]
+            filtered_stocks = sorted(active_positive, 
+                                   key=lambda x: (x['frequency'] * 0.6 + x['percentage_change'] * 0.4), 
+                                   reverse=True)[:limit]
         else:
             filtered_stocks = stock_metrics[:limit]
         
