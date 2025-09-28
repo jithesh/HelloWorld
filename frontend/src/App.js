@@ -551,7 +551,15 @@ const Dashboard = () => {
 
   useEffect(() => {
     fetchDashboard();
-  }, []);
+    
+    // Force stop loading after 15 seconds as a fallback
+    const timeout = setTimeout(() => {
+      console.log('Forcing loading to false after timeout');
+      setLoading(false);
+    }, 15000);
+    
+    return () => clearTimeout(timeout);
+  }, [fetchDashboard]);
 
   if (loading) {
     return (
