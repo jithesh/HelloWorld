@@ -139,10 +139,18 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
             <div className="h-4 w-4 bg-emerald-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-700">
-              {summary?.recent_activity_count || 0}
+            <div className="space-y-1">
+              {summary?.latest_hour_stocks?.length > 0 ? (
+                summary.latest_hour_stocks.slice(0, 5).map((stock, index) => (
+                  <div key={stock.symbol} className="text-sm font-semibold text-emerald-700">
+                    {index + 1}. {stock.symbol} (+{stock.percentage_change?.toFixed(2) || 0}%)
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500">No recent activity</div>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-2">
               Last hour updates
             </p>
           </CardContent>
@@ -154,10 +162,18 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
             <div className="h-4 w-4 bg-amber-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-amber-700">
-              {summary?.max_appearances_count || 0}
+            <div className="space-y-1">
+              {summary?.max_appearances_stocks?.length > 0 ? (
+                summary.max_appearances_stocks.slice(0, 5).map((stock, index) => (
+                  <div key={stock.symbol} className="text-sm font-semibold text-amber-700">
+                    {index + 1}. {stock.symbol} ({stock.appearances || stock.frequency || 0}x)
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500">No frequency data</div>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-2">
               Maximum appearances
             </p>
           </CardContent>
@@ -169,10 +185,18 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
             <div className="h-4 w-4 bg-red-500 rounded-full"></div>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-red-700">
-              {summary?.recent_positive_count || 0}
+            <div className="space-y-1">
+              {summary?.recent_positive_stocks?.length > 0 ? (
+                summary.recent_positive_stocks.slice(0, 5).map((stock, index) => (
+                  <div key={stock.symbol} className="text-sm font-semibold text-red-700">
+                    {index + 1}. {stock.symbol} (+{stock.percentage_change?.toFixed(2) || 0}%)
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-500">No recent gains</div>
+              )}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-muted-foreground mt-2">
               Last 15min positive
             </p>
           </CardContent>
