@@ -522,21 +522,22 @@ async def demo_get_dashboard_summary():
         total_portfolio_change = sum(stock['price_change'] for stock in stock_metrics)
         avg_percentage_change = np.mean([stock['percentage_change'] for stock in stock_metrics]) if stock_metrics else 0
         
-        # Generate option trading focused AI insights
+        # Generate trading focused AI insights
         positive_stocks = len([s for s in stock_metrics if s['percentage_change'] > 0])
-        high_activity = sorted([(s['symbol'], s.get('frequency', 1)) for s in stock_metrics], key=lambda x: x[1], reverse=True)[:3]
         
-        ai_insights = f"""🎯 Option Trading Analysis:
+        ai_insights = f"""🎯 Real-time Stock Analysis:
         
-📈 Market Sentiment: {positive_stocks}/{len(stock_metrics)} stocks showing positive momentum
-⚡ High Activity: {', '.join([f"{s[0]} ({s[1]} alerts)" for s in high_activity])}
-🔥 Hot Pick: {top_gainers[0]['symbol']} with {top_gainers[0]['percentage_change']:.2f}% growth
+📊 Market Activity: {len(latest_hour_stocks)} stocks updated in last hour
+📈 Recent Performance: {len(recent_positive_stocks)} stocks with positive 15min growth  
+⚡ High Frequency: {len(max_appearances_stocks)} stocks with maximum appearances
+🔍 Total Tracking: {len(stock_metrics)} unique stocks monitored
 
-💡 Trading Recommendations:
-• Call Options: Consider {', '.join([s['symbol'] for s in top_gainers[:2]])} for bullish momentum
-• Active Monitoring: Track {', '.join([s[0] for s in high_activity[:2]])} for volatility opportunities
-• Time Strategy: Focus on stocks with consistent 15-minute growth patterns
-• Risk Level: Current market shows {'moderate' if positive_stocks > len(stock_metrics)/2 else 'high'} volatility"""
+💡 Key Observations:
+• Latest Activity: {"Active market with recent updates" if len(latest_hour_stocks) > 3 else "Moderate activity levels"}
+• Positive Momentum: {len(recent_positive_stocks)} stocks showing recent gains
+• Market Frequency: High-appearance stocks indicate strong trading interest
+• Time-based Analysis: Focus on 15-minute and hourly patterns for trend identification
+• Data Quality: {"Excellent" if len(latest_hour_stocks) > 3 else "Good"} real-time data coverage"""
         
         # Calculate the three requested metrics
         current_time = datetime.now(timezone.utc)
