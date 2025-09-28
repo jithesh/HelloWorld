@@ -516,8 +516,8 @@ async def sync_stock_data(demo: bool = False, current_user: User = Depends(get_c
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
-        # For demo, we'll simulate the Google Sheets data structure
-        # In production, this would fetch from the actual Google Sheet
+        # For demo, we'll simulate the Boom sheet data structure
+        # In production, this would fetch from the actual Boom sheet (7th sheet)
         sheet_id = "14ne0TE4FQ5s_NzWNa93uLN6OYBWh78iy3mCM0KTon1o"
         
         # Simulate fetched data (based on the actual sheet structure)
