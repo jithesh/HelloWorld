@@ -674,8 +674,11 @@ const Dashboard = () => {
           <TabsContent value="overview" className="space-y-6">
             <DashboardSummary 
               summary={dashboardData} 
-              onRefresh={syncStockData}
+              onRefresh={() => syncStockData(false)}
               loading={loading}
+              autoSyncEnabled={autoSyncEnabled}
+              toggleAutoSync={toggleAutoSync}
+              lastSyncTime={lastSyncTime}
             />
 
             <div className="grid gap-6 lg:grid-cols-3">
