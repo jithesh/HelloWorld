@@ -310,7 +310,17 @@ const StockList = ({ title, stocks, type }) => {
                       </div>
                     </div>
                   )}
-                  {!['recent', 'frequent', 'positive'].includes(type) && (
+                  {type === 'negative' && (
+                    <div>
+                      <Badge className={getBadgeColor(stock.percentage_change)}>
+                        {stock.percentage_change?.toFixed(2)}%
+                      </Badge>
+                      <div className="text-xs text-gray-600 mt-1">
+                        ₹{stock.price_change?.toFixed(2)}
+                      </div>
+                    </div>
+                  )}
+                  {!['recent', 'frequent', 'positive', 'negative'].includes(type) && (
                     <div>
                       <Badge className={getBadgeColor(stock.percentage_change)}>
                         {stock.percentage_change > 0 ? '+' : ''}{stock.percentage_change?.toFixed(2)}%
