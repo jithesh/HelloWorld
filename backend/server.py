@@ -546,10 +546,11 @@ async def get_stock_analysis(symbol: str, current_user: User = Depends(get_curre
 async def get_filtered_stocks(
     filter_type: str = "percentage_gains",  # percentage_gains, absolute_gains, consistent_growth
     limit: int = 10,
+    demo: bool = False,
     current_user: User = Depends(get_current_user)
 ):
     """Get filtered stock lists based on criteria"""
-    if not current_user:
+    if not demo and not current_user:
         raise HTTPException(status_code=401, detail="Not authenticated")
     
     try:
