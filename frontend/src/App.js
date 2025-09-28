@@ -195,10 +195,10 @@ const StockList = ({ title, stocks, type }) => {
     switch (type) {
       case 'gainers':
         return 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50';
-      case 'losers':
-        return 'border-red-200 bg-gradient-to-r from-red-50 to-rose-50';
-      case 'performers':
+      case 'opportunities':
         return 'border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50';
+      case 'active':
+        return 'border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50';
       default:
         return 'border-gray-200';
     }
