@@ -307,7 +307,92 @@ async def demo_sync_stock_data():
 @api_router.get("/demo/dashboard")
 async def demo_get_dashboard_summary():
     """Demo dashboard - shows summary without authentication"""
-    return await get_dashboard_summary(demo=True)
+    try:
+        # Get all stock data
+        stock_cursor = db.stocks.find()
+        all_stocks = await stock_cursor.to_list(length=None)
+        
+        if not all_stocks:
+            return {
+                "message": "No stock data available. Please sync first.",
+                "total_stocks": 0,
+                "top_gainers": [],
+                "top_losers": [],
+                "best_performers": [],
+                "total_portfolio_change": 0,
+                "total_portfolio_percentage": 0,
+                "ai_market_insights": "Demo data not available. Please sync stock data first.",
+                "last_updated": datetime.now(timezone.utc)
+            }
+        
+        # Convert to DataFrame for analysis
+        df = pd.DataFrame([parse_from_mongo(stock) for stock in all_stocks])
+        
+        # Calculate metrics per stock symbol
+        stock_metrics = []
+        for symbol in df['symbol'].unique():
+            symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
+            
+            if len(symbol_data) > 1:
+                current_price = symbol_data.iloc[-1]['price']
+                previous_price = symbol_data.iloc[0]['price']
+                price_change = current_price - previous_price
+                percentage_change = (price_change / previous_price) * 100 if previous_price > 0 else 0
+                
+                stock_metrics.append({
+                    'symbol': symbol,
+                    'current_price': current_price,
+                    'previous_price': previous_price,
+                    'price_change': price_change,
+                    'percentage_change': percentage_change,
+                    'data_points': len(symbol_data)
+                })
+        
+        # Sort for different categories
+        sorted_by_percentage = sorted(stock_metrics, key=lambda x: x['percentage_change'], reverse=True)
+        sorted_by_absolute = sorted(stock_metrics, key=lambda x: x['price_change'], reverse=True)
+        
+        # Top gainers (percentage)
+        top_gainers = sorted_by_percentage[:5]
+        
+        # Top losers (percentage)
+        top_losers = sorted_by_percentage[-5:]
+        
+        # Best performers (absolute price increase)
+        best_performers = sorted_by_absolute[:5]
+        
+        # Calculate portfolio metrics
+        total_portfolio_change = sum(stock['price_change'] for stock in stock_metrics)
+        avg_percentage_change = np.mean([stock['percentage_change'] for stock in stock_metrics]) if stock_metrics else 0
+        
+        # Generate simplified AI insights (faster)
+        ai_insights = "🎯 Demo Market Analysis: Based on current data, the market shows mixed signals with some stocks gaining momentum while others consolidate. Key sectors like technology and renewable energy continue to attract investor attention. Consider diversification across growth and value stocks for balanced exposure."
+        
+        dashboard_data = {
+            "total_stocks": len(stock_metrics),
+            "top_gainers": top_gainers,
+            "top_losers": top_losers,
+            "best_performers": best_performers,
+            "total_portfolio_change": round(total_portfolio_change, 2),
+            "total_portfolio_percentage": round(avg_percentage_change, 2),
+            "ai_market_insights": ai_insights,
+            "last_updated": datetime.now(timezone.utc)
+        }
+        
+        return dashboard_data
+        
+    except Exception as e:
+        logging.error(f"Demo dashboard error: {str(e)}")
+        return {
+            "total_stocks": 0,
+            "top_gainers": [],
+            "top_losers": [],
+            "best_performers": [],
+            "total_portfolio_change": 0,
+            "total_portfolio_percentage": 0,
+            "ai_market_insights": f"Demo dashboard error: {str(e)}",
+            "last_updated": datetime.now(timezone.utc)
+        }
 
 # Emergent Auth Integration
 @api_router.post("/auth/session")
