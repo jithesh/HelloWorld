@@ -498,8 +498,8 @@ const Dashboard = () => {
         )}
         
         {error && (
-          <Alert className="mb-6 border-red-200 bg-red-50">
-            <AlertDescription className="text-red-700">{error}</AlertDescription>
+          <Alert className={`mb-6 ${error.includes('✅') ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+            <AlertDescription className={error.includes('✅') ? 'text-green-700' : 'text-red-700'}>{error}</AlertDescription>
           </Alert>
         )}
 
