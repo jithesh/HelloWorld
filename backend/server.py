@@ -272,6 +272,66 @@ async def generate_ai_insights(stock_data, analysis_type="market_overview"):
 async def root():
     return {"message": "Stock Analysis API is running"}
 
+@api_router.get("/sheet/test-access/{sheet_id}")
+async def test_sheet_access(sheet_id: str):
+    """Test different methods to access Google Sheet"""
+    try:
+        import requests
+        
+        access_methods = []
+        
+        # Method 1: Try CSV export (requires public sharing)
+        try:
+            csv_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid=0"
+            response = requests.get(csv_url, timeout=5)
+            access_methods.append({
+                "method": "CSV Export",
+                "url": csv_url,
+                "status": response.status_code,
+                "accessible": response.status_code == 200
+            })
+        except Exception as e:
+            access_methods.append({
+                "method": "CSV Export",
+                "error": str(e),
+                "accessible": False
+            })
+        
+        # Method 2: Try public view
+        try:
+            view_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/edit#gid=0"
+            response = requests.get(view_url, timeout=5)
+            access_methods.append({
+                "method": "Public View",
+                "url": view_url,
+                "status": response.status_code,
+                "accessible": response.status_code == 200
+            })
+        except Exception as e:
+            access_methods.append({
+                "method": "Public View",
+                "error": str(e),
+                "accessible": False
+            })
+        
+        return {
+            "sheet_id": sheet_id,
+            "access_methods": access_methods,
+            "instructions": {
+                "to_make_sheet_accessible": [
+                    "1. Open your Google Sheet",
+                    "2. Click 'Share' button (top right)",
+                    "3. Change 'Restricted' to 'Anyone with the link'",
+                    "4. Set permission to 'Viewer'",
+                    "5. Copy the share link",
+                    "Or use Google Sheets API with proper authentication"
+                ]
+            }
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Test failed: {str(e)}")
+
 async def fetch_live_boom_sheet_data():
     """Fetch live data from the 7th sheet 'Boom' in Google Sheets"""
     try:
