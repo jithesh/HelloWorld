@@ -201,11 +201,11 @@ const DashboardSummary = ({ summary, onRefresh, loading }) => {
 const StockList = ({ title, stocks, type }) => {
   const getCardStyle = () => {
     switch (type) {
-      case 'gainers':
+      case 'recent':
         return 'border-emerald-200 bg-gradient-to-r from-emerald-50 to-green-50';
-      case 'opportunities':
+      case 'frequent':
         return 'border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50';
-      case 'active':
+      case 'positive':
         return 'border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50';
       default:
         return 'border-gray-200';
