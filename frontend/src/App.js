@@ -215,9 +215,9 @@ const StockList = ({ title, stocks, type }) => {
       <CardHeader>
         <CardTitle className="text-lg">{title}</CardTitle>
         <CardDescription>
-          {type === 'gainers' && 'Best performing stocks by percentage'}
-          {type === 'losers' && 'Stocks with highest losses'}
-          {type === 'performers' && 'Top absolute price gainers'}
+          {type === 'gainers' && 'Stocks with strong momentum for options'}
+          {type === 'opportunities' && 'Best option trading candidates'}
+          {type === 'active' && 'Most frequently tracked stocks today'}
         </CardDescription>
       </CardHeader>
       <CardContent>
