@@ -309,6 +309,9 @@ const FilteredStocks = () => {
               <SelectItem value="consistent_growth">Most Consistent Growth</SelectItem>
               <SelectItem value="most_frequent">Most Frequently Tracked</SelectItem>
               <SelectItem value="positive_growth">Positive Day Growth</SelectItem>
+              <SelectItem value="max_current_movement">Maximum Current Movement</SelectItem>
+              <SelectItem value="max_price_change">Maximum Price Change</SelectItem>
+              <SelectItem value="max_appearances">Maximum Appearances</SelectItem>
               <SelectItem value="last_5min">Last 5 Minutes Growth</SelectItem>
               <SelectItem value="last_15min">Last 15 Minutes Growth</SelectItem>
               <SelectItem value="last_1hour">Last 1 Hour Growth</SelectItem>
