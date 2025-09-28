@@ -276,16 +276,36 @@ async def root():
 async def demo_sync_stock_data():
     """Demo sync - loads sample stock data for testing"""
     try:
-        # Sample data based on your actual Google Sheet structure
+        # Sample data from Boom sheet (7th sheet) - correct structure
         sample_data = [
             ["Stock", "Price", "Time", "Alert"],
-            ["NETWEB,CARTRADE,RITES,PIGL,VERTOZ,GODREJAGRO,DMART,BSE", "3647,2499.7,267,180.4,76.13,714.75,4608,2063.4", "9:18:00 AM", "Alert for Ji ID ADX3"],
-            ["VERANDA,CARTRADE,RITES,GODREJAGRO,ICICIGI,PANACHE", "215.61,2501.4,268.73,718.95,1895.2,404.12", "9:21:00 AM", "Alert for Ji ID ADX3"],
-            ["STALLION,NETWEB,SJS,CARTRADE,HDFCLIFE,ICICIGI", "213.23,3640.6,1489.8,2517.3,767.2,1899.7", "9:24:00 AM", "Alert for Ji ID ADX3"],
-            ["QPOWER,STALLION,STYLEBAAZA,CARTRADE,HEMIPROP,VERTOZ", "1023.25,213.52,360.75,2534.1,164.2,75.56", "9:27:00 AM", "Alert for Ji ID ADX3"],
-            ["STYLEBAAZA,LIQUIDCASE,SJS,AUBANK,AURUM,FCL", "361.5,110.65,1500,752.1,172.85,256.57", "9:30:00 AM", "Alert for Ji ID ADX3"],
-            ["CARTRADE,ICICIGI,MCL,UNITEDPOLY,AURUM,APLAPOLLO", "2527.9,1904.1,59.56,51,179.84,1704.4", "9:33:00 AM", "Alert for Ji ID ADX3"],
-            ["BORORENEW,RITES,HDFCLIFE,GODREJAGRO,AUBANK,KAVDEFENCE", "579.4,266.42,768.55,708.95,749.75,140.71", "9:36:00 AM", "Alert for Ji ID ADX3"],
+            ["SONACOMS", "412", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["HDFCAMC", "5768", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["DMART", "4610.1", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["BSE", "2059.6", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["CROMPTON", "299.4", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["TVSMOTOR", "3423.9", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["JINDALSTEL", "1057.8", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["LT", "3693", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["VEDL", "463.45", "9:17:00 AM", "Alert for Ji FnO Check"],
+            ["SONACOMS", "415.2", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["HDFCAMC", "5785.3", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["DMART", "4625.7", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["BSE", "2070.4", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["CROMPTON", "301.1", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["TVSMOTOR", "3445.2", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["JINDALSTEL", "1065.4", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["LT", "3708.5", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["VEDL", "468.9", "9:20:00 AM", "Alert for Ji FnO Check"],
+            ["SONACOMS", "418.7", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["HDFCAMC", "5799.8", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["DMART", "4635.2", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["BSE", "2075.1", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["CROMPTON", "302.8", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["TVSMOTOR", "3457.6", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["JINDALSTEL", "1071.2", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["LT", "3715.9", "9:23:00 AM", "Alert for Ji FnO Check"],
+            ["VEDL", "471.3", "9:23:00 AM", "Alert for Ji FnO Check"]
         ]
         
         # Parse and store stock data
