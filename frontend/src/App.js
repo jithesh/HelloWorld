@@ -476,7 +476,7 @@ const Dashboard = () => {
     return urlParams.get('demo') === 'true' || !user;
   }, [user]);
 
-  const fetchDashboard = async () => {
+  const fetchDashboard = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
