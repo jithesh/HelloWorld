@@ -515,6 +515,7 @@ const Dashboard = () => {
       console.error('Error message:', error.message);
       setError(`API Error: ${error.response?.data?.detail || error.message || 'Failed to load dashboard'}`);
     } finally {
+      console.log('Setting loading to false in finally block');
       setLoading(false);
     }
   }, [isDemoMode]);
