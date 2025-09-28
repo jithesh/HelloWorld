@@ -243,6 +243,8 @@ const StockList = ({ title, stocks, type }) => {
         return 'border-blue-200 bg-gradient-to-r from-blue-50 to-indigo-50';
       case 'positive':
         return 'border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50';
+      case 'negative':
+        return 'border-red-200 bg-gradient-to-r from-red-50 to-rose-50';
       default:
         return 'border-gray-200';
     }
