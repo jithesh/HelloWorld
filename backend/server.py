@@ -571,19 +571,19 @@ async def demo_get_dashboard_summary():
         recent_positive_stocks = recent_positive_stocks[:5]
         
         # Generate AI insights with calculated data
-        ai_insights = f"""🎯 Real-time Stock Analysis:
+        ai_insights = f"""🎯 Sheet Data Analysis:
         
-📊 Market Activity: {len(latest_hour_stocks)} stocks updated in last hour
-📈 Recent Performance: {len(recent_positive_stocks)} stocks with positive 15min growth  
+📊 Latest Activity: {len(latest_hour_stocks)} stocks with most recent data entries
+📈 Recent Positive: {len(recent_positive_stocks)} stocks with recent positive growth  
 ⚡ High Frequency: {len(max_appearances_stocks)} stocks with maximum appearances
-🔍 Total Tracking: {len(stock_metrics)} unique stocks monitored
+🔍 Total Tracking: {len(stock_metrics)} unique stocks in sheet
 
 💡 Key Observations:
-• Latest Activity: {"Active market with recent updates" if len(latest_hour_stocks) > 3 else "Moderate activity levels"}
-• Positive Momentum: {len(recent_positive_stocks)} stocks showing recent gains
-• Market Frequency: High-appearance stocks indicate strong trading interest
-• Time-based Analysis: Focus on 15-minute and hourly patterns for trend identification
-• Data Quality: {"Excellent" if len(latest_hour_stocks) > 3 else "Good"} real-time data coverage"""
+• Latest Data: {"High activity" if len(latest_hour_stocks) > 3 else "Moderate activity"} based on sheet timestamps
+• Positive Momentum: {len(recent_positive_stocks)} stocks showing recent gains in available data
+• Market Frequency: High-appearance stocks indicate strong tracking focus
+• Data Analysis: Based on chronological data patterns in your sheet
+• Coverage: {"Excellent" if len(latest_hour_stocks) > 3 else "Good"} data availability from sheet"""
         
         dashboard_data = {
             "total_stocks": len(stock_metrics),
