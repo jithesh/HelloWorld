@@ -506,26 +506,23 @@ async def demo_get_dashboard_summary():
                     'data_points': len(symbol_data)
                 })
         
-        # Calculate the three requested metrics
-        current_time = datetime.now(timezone.utc)
-        one_hour_ago = current_time - timedelta(hours=1)
-        fifteen_min_ago = current_time - timedelta(minutes=15)
+        # Calculate the three requested metrics using relative time from sheet data
         
-        # 1. Five stocks with latest data occurrences in the last hour
+        # 1. Five stocks with latest data occurrences (most recent timestamps in sheet)
         latest_hour_stocks = []
         for stock in stock_metrics:
             symbol = stock['symbol']
             symbol_data = df[df['symbol'] == symbol].sort_values('timestamp')
             
-            # Get latest timestamp for this stock
+            # Get latest timestamp for this stock from the available data
             if len(symbol_data) > 0:
                 latest_timestamp = symbol_data.iloc[-1]['timestamp']
-                # Since demo data uses current time, all should be within the hour
-                stock['latest_timestamp'] = latest_timestamp
-                latest_hour_stocks.append(stock.copy())
+                stock_copy = stock.copy()
+                stock_copy['latest_timestamp'] = latest_timestamp
+                latest_hour_stocks.append(stock_copy)
         
-        # Sort by percentage change and take top 5 for demo
-        latest_hour_stocks.sort(key=lambda x: x['percentage_change'], reverse=True)
+        # Sort by most recent timestamp in the sheet data (not current time)
+        latest_hour_stocks.sort(key=lambda x: x.get('latest_timestamp', datetime.min.replace(tzinfo=timezone.utc)), reverse=True)
         latest_hour_stocks = latest_hour_stocks[:5]
         
         # 2. First five stocks with maximum number of appearances
