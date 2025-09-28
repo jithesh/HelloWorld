@@ -538,7 +538,7 @@ const LandingPage = () => {
           Secure authentication • No data stored • Privacy first
         </p>
       </div>
-    </div>
+    </main>
   );
 };
 
