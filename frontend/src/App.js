@@ -763,8 +763,10 @@ function App() {
 
 const AppRouter = () => {
   const { user, loading } = useAuth();
-  const urlParams = new URLSearchParams(window.location.search);
-  const isDemoMode = urlParams.get('demo') === 'true';
+  const isDemoMode = useMemo(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get('demo') === 'true';
+  }, []);
 
   if (loading && !isDemoMode) {
     return <LoadingScreen />;
