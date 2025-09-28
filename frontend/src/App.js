@@ -385,18 +385,14 @@ const Dashboard = () => {
     setLoading(true);
     setError(null);
     try {
-      // Try authenticated dashboard first, fall back to demo dashboard
-      try {
+      if (isDemoMode) {
+        // Use demo dashboard in demo mode
+        const response = await axios.get(`${API}/demo/dashboard`);
+        setDashboardData(response.data);
+      } else {
+        // Use authenticated dashboard
         const response = await axios.get(`${API}/stocks/dashboard`);
         setDashboardData(response.data);
-      } catch (authError) {
-        if (authError.response?.status === 401) {
-          // Use demo dashboard if not authenticated
-          const response = await axios.get(`${API}/demo/dashboard`);
-          setDashboardData(response.data);
-        } else {
-          throw authError;
-        }
       }
     } catch (error) {
       console.error('Dashboard error:', error);
