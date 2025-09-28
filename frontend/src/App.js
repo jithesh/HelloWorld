@@ -524,9 +524,9 @@ const Dashboard = () => {
           <TabsContent value="analysis" className="space-y-6">
             <Card className="bg-gradient-to-r from-indigo-50 to-purple-50 border-indigo-200">
               <CardHeader>
-                <CardTitle className="text-xl">📊 Market Analysis</CardTitle>
+                <CardTitle className="text-xl">🎯 Option Trading Analysis</CardTitle>
                 <CardDescription>
-                  Comprehensive stock market analysis with AI insights
+                  AI-powered insights for option trading opportunities
                 </CardDescription>
               </CardHeader>
               <CardContent>
@@ -536,7 +536,7 @@ const Dashboard = () => {
                   </div>
                 ) : (
                   <div className="text-center py-8 text-gray-500">
-                    Sync data to view AI analysis
+                    Sync data to view option trading analysis
                   </div>
                 )}
               </CardContent>
