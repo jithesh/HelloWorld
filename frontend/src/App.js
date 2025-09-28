@@ -346,6 +346,9 @@ const FilteredStocks = () => {
                     <div className="text-right">
                       <div className="text-sm font-medium">
                         {filterType === 'most_frequent' ? 'Frequency' : 
+                         filterType === 'max_appearances' ? 'Appearances' :
+                         filterType === 'max_current_movement' ? 'Movement' :
+                         filterType === 'max_price_change' ? 'Price Change' :
                          filterType === 'last_5min' ? '5min Growth' :
                          filterType === 'last_15min' ? '15min Growth' :
                          filterType === 'last_1hour' ? '1hr Growth' :
@@ -354,6 +357,9 @@ const FilteredStocks = () => {
                       </div>
                       <div className="text-sm text-gray-600">
                         {filterType === 'most_frequent' ? `${stock.frequency || 0} alerts` :
+                         filterType === 'max_appearances' ? `${stock.frequency || 0} times` :
+                         filterType === 'max_current_movement' ? `${Math.abs(stock.percentage_change || 0).toFixed(2)}%` :
+                         filterType === 'max_price_change' ? `₹${Math.abs(stock.price_change || 0).toFixed(2)}` :
                          filterType === 'last_5min' ? `${stock.last_5min_growth?.toFixed(2) || 0}%` :
                          filterType === 'last_15min' ? `${stock.last_15min_growth?.toFixed(2) || 0}%` :
                          filterType === 'last_1hour' ? `${stock.last_1hour_growth?.toFixed(2) || 0}%` :
