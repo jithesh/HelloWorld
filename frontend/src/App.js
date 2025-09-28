@@ -425,17 +425,32 @@ const Dashboard = () => {
       if (isDemoMode) {
         // Use demo dashboard in demo mode
         console.log('Making request to:', `${API}/demo/dashboard`);
-        const response = await axios.get(`${API}/demo/dashboard`);
-        console.log('Demo dashboard response:', response.data);
-        setDashboardData(response.data);
+        const response = await axios.get(`${API}/demo/dashboard`, {
+          timeout: 10000,
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        console.log('Demo dashboard response received:', response.status);
+        console.log('Demo dashboard response data:', response.data);
+        
+        if (response.data) {
+          setDashboardData(response.data);
+          console.log('Dashboard data set successfully');
+        } else {
+          console.error('No data in response');
+          setError('No data received from server');
+        }
       } else {
         // Use authenticated dashboard
         const response = await axios.get(`${API}/stocks/dashboard`);
         setDashboardData(response.data);
       }
     } catch (error) {
-      console.error('Dashboard error:', error);
-      setError(error.response?.data?.detail || error.message || 'Failed to load dashboard');
+      console.error('Dashboard error details:', error);
+      console.error('Error response:', error.response);
+      console.error('Error message:', error.message);
+      setError(`API Error: ${error.response?.data?.detail || error.message || 'Failed to load dashboard'}`);
     } finally {
       setLoading(false);
     }
