@@ -266,23 +266,13 @@ const FilteredStocks = () => {
   const fetchFilteredStocks = async (type) => {
     setLoading(true);
     try {
-      // Try authenticated filters first, fall back to demo filters
-      try {
-        const response = await axios.get(`${API}/stocks/filters`, {
-          params: { filter_type: type, limit: 10 }
-        });
-        setFilteredStocks(response.data.stocks || []);
-      } catch (authError) {
-        if (authError.response?.status === 401) {
-          // Use demo filters if not authenticated
-          const response = await axios.get(`${API}/stocks/filters`, {
-            params: { filter_type: type, limit: 10, demo: true }
-          });
-          setFilteredStocks(response.data.stocks || []);
-        } else {
-          throw authError;
-        }
+      const params = { filter_type: type, limit: 10 };
+      if (isDemoMode) {
+        params.demo = true;
       }
+      
+      const response = await axios.get(`${API}/stocks/filters`, { params });
+      setFilteredStocks(response.data.stocks || []);
     } catch (error) {
       console.error('Error fetching filtered stocks:', error);
     } finally {
