@@ -544,8 +544,13 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
-    console.log('useEffect triggered, calling fetchDashboard once');
-    fetchDashboard();
+    if (!hasInitialized.current) {
+      console.log('useEffect triggered FIRST TIME, calling fetchDashboard');
+      hasInitialized.current = true;
+      fetchDashboard();
+    } else {
+      console.log('useEffect triggered AGAIN, but skipping to prevent duplicates');
+    }
   }, []); // Empty dependency array to run only once
 
   if (false) { // Temporarily disable loading screen for debugging
