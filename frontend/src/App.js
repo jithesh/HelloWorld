@@ -617,12 +617,14 @@ function App() {
 
 const AppRouter = () => {
   const { user, loading } = useAuth();
+  const urlParams = new URLSearchParams(window.location.search);
+  const isDemoMode = urlParams.get('demo') === 'true';
 
-  if (loading) {
+  if (loading && !isDemoMode) {
     return <LoadingScreen />;
   }
 
-  if (!user) {
+  if (!user && !isDemoMode) {
     return <LandingPage />;
   }
 
