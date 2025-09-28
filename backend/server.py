@@ -331,9 +331,10 @@ async def get_current_user_info(current_user: User = Depends(get_current_user)):
 @api_router.post("/auth/logout")
 async def logout(request: Request, response: Response, current_user: User = Depends(get_current_user)):
     """Logout user"""
-    if current_user:
-        await db.users.delete_one({"session_token": current_user.session_token})
-    
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+        
+    await db.users.delete_one({"session_token": current_user.session_token})
     response.delete_cookie("session_token", path="/")
     return {"message": "Logged out successfully"}
 
