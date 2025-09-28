@@ -552,16 +552,9 @@ const Dashboard = () => {
   };
 
   useEffect(() => {
+    console.log('useEffect triggered, calling fetchDashboard once');
     fetchDashboard();
-    
-    // Force stop loading after 15 seconds as a fallback
-    const timeout = setTimeout(() => {
-      console.log('Forcing loading to false after timeout');
-      setLoading(false);
-    }, 15000);
-    
-    return () => clearTimeout(timeout);
-  }, [fetchDashboard]);
+  }, []); // Empty dependency array to run only once
 
   if (loading) {
     return (
