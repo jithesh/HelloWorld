@@ -444,6 +444,14 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="max-w-7xl mx-auto p-6">
+        {isDemoMode && (
+          <Alert className="mb-6 border-blue-200 bg-blue-50">
+            <AlertDescription className="text-blue-700">
+              🎯 Demo Mode: You're viewing sample stock data. <a href="/" className="underline font-medium">Sign in with Google</a> to connect your own Google Sheets.
+            </AlertDescription>
+          </Alert>
+        )}
+        
         {error && (
           <Alert className="mb-6 border-red-200 bg-red-50">
             <AlertDescription className="text-red-700">{error}</AlertDescription>
