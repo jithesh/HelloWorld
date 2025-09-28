@@ -332,65 +332,62 @@ async def test_sheet_access(sheet_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Test failed: {str(e)}")
 
-async def fetch_live_boom_sheet_data():
-    """Fetch live data from the 7th sheet 'Boom' in Google Sheets"""
+async def fetch_live_boom_sheet_data(access_token: str = None):
+    """Fetch live data from the Boom sheet using Google Sheets API with authentication"""
     try:
-        import requests
-        
-        # Your Google Sheet ID
         sheet_id = "14ne0TE4FQ5s_NzWNa93uLN6OYBWh78iy3mCM0KTon1o"
+        boom_sheet_gid = "304037161"  # Correct GID for Boom sheet from your URL
         
-        # Try multiple methods to access the 7th sheet "Boom"
-        
-        # Method 1: Try with sheet name "Boom"
-        boom_sheet_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/gviz/tq?tqx=out:csv&sheet=Boom"
-        
-        # Method 2: Also try common GIDs for 7th sheet (sheets are often numbered)
-        # Common GID patterns: 0, 1, 2, ... or random numbers
-        potential_gids = ["118779867", "0", "1", "2", "3", "4", "5", "6"]  # Using the GID from your original URL
-        
-        # First try with sheet name
-        response = requests.get(boom_sheet_url, timeout=10)
-        
-        if response.status_code == 200:
-            # Parse CSV data
-            import csv
-            import io
-            
-            csv_data = response.text
-            reader = csv.reader(io.StringIO(csv_data))
-            rows = list(reader)
-            
-            # Check if we got meaningful data (should have stock names)
-            if len(rows) > 1 and any(stock in str(rows).upper() for stock in ["SONACOMS", "HDFCAMC", "DMART", "VEDL"]):
-                logging.info(f"Successfully fetched live data from Boom sheet: {len(rows)} rows")
-                return rows
-        
-        # If sheet name didn't work, try with GID from your original URL
-        for gid in potential_gids:
+        if access_token:
+            # Use authenticated Google Sheets API
             try:
-                gid_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={gid}"
-                response = requests.get(gid_url, timeout=5)
+                credentials = Credentials(token=access_token)
+                service = build('sheets', 'v4', credentials=credentials)
                 
-                if response.status_code == 200:
-                    import csv
-                    import io
+                # Fetch data from the specific Boom sheet range
+                range_name = "Boom!A:D"  # All columns A to D from Boom sheet
+                
+                result = service.spreadsheets().values().get(
+                    spreadsheetId=sheet_id,
+                    range=range_name
+                ).execute()
+                
+                rows = result.get('values', [])
+                
+                if len(rows) > 1:
+                    logging.info(f"Successfully fetched authenticated data: {len(rows)} rows")
+                    return rows
                     
-                    csv_data = response.text
-                    reader = csv.reader(io.StringIO(csv_data))
-                    rows = list(reader)
-                    
-                    # Check if this looks like the Boom sheet (has stock data)
-                    if len(rows) > 1 and any(stock in str(rows).upper() for stock in ["SONACOMS", "HDFCAMC", "DMART", "VEDL"]):
-                        logging.info(f"Successfully fetched live data from GID {gid}: {len(rows)} rows")
-                        return rows
-                        
-            except Exception as e:
-                logging.debug(f"Failed to fetch with GID {gid}: {str(e)}")
-                continue
+            except Exception as auth_error:
+                logging.error(f"Authenticated fetch failed: {str(auth_error)}")
         
-        # Fallback to sample data if live fetch fails
-        logging.warning(f"Could not fetch live data from any method")
+        # Fallback: Try with the specific GID from your URL
+        try:
+            import requests
+            
+            # Try the exact GID from your sheet URL
+            gid_url = f"https://docs.google.com/spreadsheets/d/{sheet_id}/export?format=csv&gid={boom_sheet_gid}"
+            response = requests.get(gid_url, timeout=10)
+            
+            if response.status_code == 200:
+                import csv
+                import io
+                
+                csv_data = response.text
+                reader = csv.reader(io.StringIO(csv_data))
+                rows = list(reader)
+                
+                if len(rows) > 1:
+                    logging.info(f"Successfully fetched data via GID {boom_sheet_gid}: {len(rows)} rows")
+                    return rows
+            else:
+                logging.warning(f"CSV export failed with status {response.status_code}")
+                
+        except Exception as e:
+            logging.error(f"GID fetch error: {str(e)}")
+        
+        # Final fallback
+        logging.warning("Could not fetch live data - authentication required")
         return None
             
     except Exception as e:
